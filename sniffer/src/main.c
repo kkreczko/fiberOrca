@@ -13,9 +13,49 @@ int linkhdrlen;
 int packets;
 pcap_handler packet_handler;
 
-pcap_t* create_pcap_handle(char* device, char* filter);
+//TODO extrude this methods to their own headers and source files
 int get_link_header_len(pcap_t *handle);
 void stop_capture(int sig_number);
+
+pcap_t* create_pcap_handle(char* device, char* filter) {
+    char errbuf[PCAP_ERRBUF_SIZE];
+    pcap_t *handle = NULL;
+    pcap_if_t *devices = NULL;
+    struct bpf_program bpf;
+    bpf_u_int32 netmask;
+    bpf_u_int32 srcip;
+
+    if (!*device) {
+        if (pcap_findalldevs(&devices, errbuf)) {
+            fprintf(stderr, "pcap_findalldevs(): %s\n", errbuf);
+            return NULL;
+        }
+        strcpy(device, devices[0].name);
+    }
+
+    if (pcap_lookupnet(device, &srcip, &netmask, errbuf) == PCAP_ERROR) {
+        fprintf(stderr, "pcap_lookupnet(): %s\n", errbuf);
+        return NULL;
+    }
+
+    handle = pcap_open_live(device, BUFSIZ, 1, 1000, errbuf);
+    if (handle == NULL) {
+        fprintf(stderr, "pcap_open_live(): %s\n", errbuf);
+        return NULL;
+    }
+
+    if (pcap_compile(handle, &bpf, filter, 0, netmask) == PCAP_ERROR) {
+        fprintf(stderr, "pcap_compile(): %s\n", pcap_geterr(handle));
+        return NULL;
+    }
+
+    if (pcap_setfilter(handle, &bpf) == PCAP_ERROR) {
+        fprintf(stderr, "pcap_setfilter(): %s\n", pcap_geterr(handle));
+        return NULL;
+    }
+
+    return handle;
+}
 
 int main(int argc, char* argv[]) {
     char device[256];
@@ -67,3 +107,4 @@ int main(int argc, char* argv[]) {
 
     stop_capture(0);
 }
+
