@@ -11,21 +11,11 @@
 pcap_t* handle;
 int linkhdrlen;
 int packets;
+pcap_handler packet_handler;
 
-void stop_capture(int sig_number) {
-    struct pcap_stat stats;
-    
-    // TODO Change "handle" later, it's here to silence LSP warnings because im LAZY!
-    // WARN 
-    if (pcap_stats(handle, &stats) >= 0) {
-        printf("\n%d packets captured\n", packets);
-        printf("%d packets received\n", stats.ps_recv);
-        printf("%d packets dropped\n\n", stats.ps_drop);
-    }
-
-    pcap_close(handle);
-    EXIT_SUCCESS;
-}
+pcap_t* create_pcap_handle(char* device, char* filter);
+int get_link_header_len(pcap_t *handle);
+void stop_capture(int sig_number);
 
 int main(int argc, char* argv[]) {
     char device[256];
@@ -60,5 +50,20 @@ int main(int argc, char* argv[]) {
     signal(SIGTERM, stop_capture);
     signal(SIGQUIT, stop_capture);
 
-    return EXIT_SUCCESS;
+    handle = create_pcap_handle(device, filter);
+    if (handle == NULL) {
+        return EXIT_FAILURE;
+    }
+
+    linkhdrlen = get_link_header_len(handle);
+    if (linkhdrlen == 0) {
+        return EXIT_FAILURE;
+    }
+    
+    if (pcap_loop(handle, count, packet_handler, (u_char*)NULL) < 0) {
+        fprintf(stderr, "pcap_loop failed wawa: %s\n", pcap_geterr(handle));
+        return EXIT_FAILURE;
+    }
+
+    stop_capture(0);
 }
