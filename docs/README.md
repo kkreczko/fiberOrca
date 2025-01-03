@@ -1,4 +1,4 @@
 # fiberOrca
 Lightweight, beautiful, fast
 # Prerequisites
-- libcap
+- libpcap
