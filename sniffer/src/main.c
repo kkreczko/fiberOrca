@@ -14,6 +14,7 @@ int packets;
 pcap_handler packet_handler;
 
 //TODO extrude this methods to their own headers and source files
+//TODO implement this methods
 int get_link_header_len(pcap_t *handle);
 void stop_capture(int sig_number);
 
