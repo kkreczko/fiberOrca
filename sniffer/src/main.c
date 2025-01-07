@@ -13,8 +13,8 @@ int linkhdrlen;
 int packets;
 pcap_handler packet_handler;
 
+//TODO rework code for readability
 //TODO extrude this methods to their own headers and source files
-//TODO implement this methods
 void stop_capture(int sig_number){
     struct pcap_stat stats;
 
