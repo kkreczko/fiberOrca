@@ -15,8 +15,32 @@ pcap_handler packet_handler;
 
 //TODO extrude this methods to their own headers and source files
 //TODO implement this methods
-int get_link_header_len(pcap_t *handle);
 void stop_capture(int sig_number);
+
+int get_link_header_len(pcap_t *handle) {
+    int linktype;
+
+    if ((linktype == pcap_datalink(handle)) == PCAP_ERROR) {
+        fprintf(stderr, "pcap_datalink(): ", pcap_geterr(handle));
+        return; 
+    }
+    
+    switch (linktype) {
+        case DLT_NULL:
+            linkhdrlen = 4;
+            break;
+        case DLT_EN10MB:
+            linkhdrlen = 14;
+            break;
+        case DLT_SLIP:
+        case DLT_PPP:
+            linkhdrlen = 24;
+            break;
+        default:
+            printf("Unsupported data link (%d)\n", linktype);
+            linkhdrlen = 0;
+    }
+};
 
 pcap_t* create_pcap_handle(char* device, char* filter) {
     char errbuf[PCAP_ERRBUF_SIZE];
