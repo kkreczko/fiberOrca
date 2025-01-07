@@ -15,7 +15,19 @@ pcap_handler packet_handler;
 
 //TODO extrude this methods to their own headers and source files
 //TODO implement this methods
-void stop_capture(int sig_number);
+void stop_capture(int sig_number){
+    struct pcap_stat stats;
+
+    if (pcap_stats(pd, &stats) >= 0) {
+        printf("\n%d packets captured\n", packets);
+        printf("%d packets received\n", stats.ps_recv);
+        printf("%d packets dropped\n\n", stats.ps_drop);
+    }
+
+    pcap_close(pd);
+    exit(EXIT_SUCCESS);
+}
+
 void packet_handler(u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr) {
     struct *ip iphdr;
     struct *icmp icmphdr;
