@@ -15,6 +15,7 @@ int linkhdrlen = 0;
 int packets = 0;
 
 //TODO move methods to their own header and source files
+//TODO switch from printing to ICP communication with bubbletea process
 void stop_capture(int sig_number) {
     struct pcap_stat stats;
 
@@ -69,7 +70,7 @@ void packet_handler(u_char *user, const struct pcap_pkthdr *packethdr, const u_c
                    (tcphdr->th_flags & TH_PUSH ? 'P' : '*'),
                    (tcphdr->th_flags & TH_RST ? 'R' : '*'),
                    (tcphdr->th_flags & TH_SYN ? 'S' : '*'),
-                   (tcphdr->th_flags & TH_FIN ? 'F' : '*'),  // Fixed: Was checking SYN instead of FIN
+                   (tcphdr->th_flags & TH_FIN ? 'F' : '*'),
                    ntohl(tcphdr->th_seq), ntohl(tcphdr->th_ack),
                    ntohs(tcphdr->th_win), 4*tcphdr->th_off);
             break;
