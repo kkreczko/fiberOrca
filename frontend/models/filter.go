@@ -2,6 +2,7 @@ package models
 
 import "time"
 
+// Filter is a struct that represents a session filter
 type Filter struct {
 	MAC                 string
 	IP                  string

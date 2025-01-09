@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// Session is a struct that represents a session
+// Session is a struct that represents a application session
 type Session struct {
 	collectedPackets []Packet
 	filter           Filter
