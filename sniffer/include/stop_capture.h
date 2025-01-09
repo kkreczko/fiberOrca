@@ -1,4 +1,0 @@
-#ifndef INCLUDE_STOP_CAPTURE_H
-#define INCLUDE_STOP_CAPTURE_H
-
-#endif

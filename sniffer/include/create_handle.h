@@ -1,4 +1,0 @@
-#ifndef INCLUDE_CREATE_HANDLE_H
-#define INCLUDE_CREATE_HANDLE_H
-
-#endif

@@ -12,8 +12,16 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -lpcap")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -O0")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3")
 
+set(SOURCES
+        src/main.c
+        src/capture.c
+        src/packet_handler.c
+        src/globals.c
+        src/globals.c
+)
+
 include_directories(
-        ${PROJECT_SOURCE_DIR}/includ
+        ${PROJECT_SOURCE_DIR}/include
 )
 
 file(GLOB_RECURSE SOURCES
@@ -21,6 +29,7 @@ file(GLOB_RECURSE SOURCES
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
+
 target_link_libraries(${PROJECT_NAME} ${PCAP_LIBRARIES})
 
 enable_testing()
