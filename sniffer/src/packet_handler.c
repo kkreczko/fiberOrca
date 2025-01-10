@@ -2,6 +2,8 @@
 #include <arpa/inet.h>
 #include <stdio.h>
 
+//WARN When switching to ICP this will have to be changed, or we should add new function that will work only with ICP
+//we might leave non-ICP functionality of this program for UX
 void packet_handler(u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr) {
     struct icmp *icmphdr;
     struct tcphdr *tcphdr;

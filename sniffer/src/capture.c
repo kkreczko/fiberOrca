@@ -56,6 +56,9 @@ pcap_t* create_pcap_handle(char* device, char* filter) {
     return handle;
 }
 
+//WARN we can add functionality to catch Wifi packets with their cool information like signal power etc.
+//right now we can catch only those wifi packets which were converted to Ethernet by network interface card driver
+//IEEE 802.11
 int get_link_header_len(pcap_t *handle) {
     int linktype;
 
@@ -90,5 +93,6 @@ void stop_capture(int sig_number) {
     if (handle) {
         pcap_close(handle);
     }
+
     exit(EXIT_SUCCESS);
 }
