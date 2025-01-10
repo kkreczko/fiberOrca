@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     while ((opt = getopt(argc, argv, "hi:n:")) != -1) {
         switch (opt) {
             case 'h':
-                printf("Usage: %s [-i interface] [-n count] [filter]\n", argv[0]);
+                printf("Usage: %s [-i interface] [-n count] [filter]\nexample: -n 64 tcp port 80", argv[0]);
                 return EXIT_SUCCESS;
             case 'i':
                 strncpy(device, optarg, sizeof(device) - 1);
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
 
-    if (pcap_loop(handle, count, packet_handler, (u_char*)NULL) < 0) {
+    if (pcap_loop(handle, count, packet_handler, NULL) < 0) {
         fprintf(stderr, "pcap_loop failed: %s\n", pcap_geterr(handle));
         pcap_close(handle);
         return EXIT_FAILURE;
