@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	tea "github.com/charmbracelet/bubbletea"
+	"time"
+)
 import "github.com/charmbracelet/huh"
 
 var startTime, endTime string
@@ -65,7 +68,40 @@ func NewFilter(width, height int) Filter {
 				Placeholder("End Time").
 				Value(&endTime),
 		),
-	)
+	).
+		WithHeight(height).
+		WithWidth(width)
 	return m
 
+}
+
+func (m Filter) Init() tea.Cmd {
+	return m.form.Init()
+}
+
+func (m Filter) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		if msg.String() == "q" {
+			return m, tea.Quit
+		}
+	}
+
+	var cmds []tea.Cmd
+	m.form, cmd := m.form.Update(msg)
+
+	if f, ok := form.(*huh.Form); ok {
+		m.form = f
+		cmds = append(cmds, cmd)
+	}
+
+	if m.form.State == huh.StateCompleted {
+		cmds = append(cmds, tea.Quit)
+	}
+
+	return m, tea.Batch(cmds...)
+}
+
+func (m Filter) View() string {
+	return m.form.View()
 }
