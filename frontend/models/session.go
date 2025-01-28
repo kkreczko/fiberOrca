@@ -7,7 +7,8 @@ import (
 	"time"
 )
 
-var modelList []tea.Model
+var modelList = []tea.Model{nil, nil, nil}
+var width, height int
 
 const (
 	session = iota
@@ -41,10 +42,12 @@ func (s *Session) Init() tea.Cmd {
 func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
+		width = msg.Width
+		height = msg.Height - 5
 		if !s.loaded {
-			style.Width(msg.Width)
-			style.Height(msg.Height - 5)
-			s.initData(msg.Width, msg.Height-5)
+			style.Width(width)
+			style.Height(height)
+			s.initData(width, height)
 			s.loaded = true
 		}
 	case tea.KeyMsg:
@@ -52,12 +55,22 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "q", "ctrl+c":
 			s.quit = true
 			return s, tea.Quit
+		case "enter":
+			ID := s.packetPreviews.SelectedItem().(PacketPreview).ID
+			for _, p := range s.collectedPackets {
+				if p.ID == ID {
+					modelList[packet] = NewPacketView(p, s, width, height)
+				}
+			}
+			modelList[session] = s
+			var cmd tea.Cmd
+			return modelList[packet].Update(cmd)
 		}
 	case Packet:
 		return s, s.AddPacket(msg)
 	}
 	var cmd tea.Cmd
-	s.packetPreviews, cmd = s.packetPreviews.Update(msg)
+	s.packetPreviews, cmd = s.packetPreviews.Update(cmd)
 	return s, cmd
 }
 
