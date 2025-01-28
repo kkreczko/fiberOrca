@@ -15,3 +15,8 @@ type Filter struct {
 	startTime           time.Time
 	endTime             time.Time
 }
+
+// NewFilter creates a new filter
+func NewFilter() Filter {
+	return Filter{}
+}
