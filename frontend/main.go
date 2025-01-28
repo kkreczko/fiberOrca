@@ -7,16 +7,8 @@ import (
 	"os"
 )
 
-var modelList []tea.Model
-
-const (
-	session = iota
-	filter
-)
-
 func main() {
-	modelList = []tea.Model{models.NewSession()}
-	s := modelList[session]
+	s := models.NewSession()
 	p := tea.NewProgram(s)
 	if err := p.Start(); err != nil {
 		fmt.Println("Error starting program:", err)

@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 // DataLink is a struct that represents the data link layer of a packet
 type DataLink struct {
@@ -32,10 +34,6 @@ type Packet struct {
 	Transport Transport
 	TTL       int
 	datetime  time.Time
-}
-
-func (p Packet) FilterValue() string {
-	return p.Network.SourceIP
 }
 
 func (p Packet) SourceMac() string {

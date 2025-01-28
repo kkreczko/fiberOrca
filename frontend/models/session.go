@@ -7,6 +7,14 @@ import (
 	"time"
 )
 
+var modelList []tea.Model
+
+const (
+	session = iota
+	packet
+	filter
+)
+
 var style = lipgloss.NewStyle().
 	Padding(1, 2).
 	Border(lipgloss.RoundedBorder()).
@@ -15,7 +23,8 @@ var style = lipgloss.NewStyle().
 // Session is a struct that represents a application session
 // It implements the Model interface
 type Session struct {
-	collectedPackets list.Model
+	packetPreviews   list.Model
+	collectedPackets []Packet
 	filter           Filter
 	startTime        time.Time
 	endTime          time.Time
@@ -40,7 +49,7 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "q", "esc", "ctrl+c":
+		case "q", "ctrl+c":
 			s.quit = true
 			return s, tea.Quit
 		}
@@ -48,7 +57,7 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return s, s.AddPacket(msg)
 	}
 	var cmd tea.Cmd
-	s.collectedPackets, cmd = s.collectedPackets.Update(msg)
+	s.packetPreviews, cmd = s.packetPreviews.Update(msg)
 	return s, cmd
 }
 
@@ -57,7 +66,7 @@ func (s *Session) View() string {
 		return ""
 	}
 	if s.loaded {
-		return style.Render(s.collectedPackets.View())
+		return style.Render(s.packetPreviews.View())
 	} else {
 		return "Loading..."
 	}
@@ -70,5 +79,5 @@ func NewSession() *Session {
 
 // AddPacket adds a packet to the session
 func (s *Session) AddPacket(p Packet) tea.Cmd {
-	return s.collectedPackets.InsertItem(-1, list.Item(p))
+	return s.packetPreviews.InsertItem(-1, list.Item(NewPacketPreview(p)))
 }

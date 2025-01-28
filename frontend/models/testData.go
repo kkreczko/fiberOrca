@@ -7,10 +7,10 @@ import (
 
 func (s *Session) initData(width, height int) {
 	packetList := list.New([]list.Item{}, list.NewDefaultDelegate(), width, height)
-	s.collectedPackets = packetList
-	s.collectedPackets.Title = "Packets"
-	s.collectedPackets.SetItems([]list.Item{
-		&Packet{
+	s.packetPreviews = packetList
+	s.packetPreviews.Title = "Packets"
+	s.collectedPackets = []Packet{
+		{
 			ID: 1,
 			DataLink: DataLink{
 				SourceMAC:      "00:00:00:00:00:00",
@@ -30,7 +30,7 @@ func (s *Session) initData(width, height int) {
 			TTL:      64,
 			datetime: time.Now(),
 		},
-		&Packet{
+		{
 			ID: 2,
 			DataLink: DataLink{
 				SourceMAC:      "00:00:00:00:00:00",
@@ -50,7 +50,7 @@ func (s *Session) initData(width, height int) {
 			TTL:      64,
 			datetime: time.Now(),
 		},
-		&Packet{
+		{
 			ID: 2,
 			DataLink: DataLink{
 				SourceMAC:      "00:00:00:00:00:00",
@@ -70,5 +70,9 @@ func (s *Session) initData(width, height int) {
 			TTL:      64,
 			datetime: time.Now(),
 		},
-	})
+	}
+	for _, packet := range s.collectedPackets {
+		s.packetPreviews.InsertItem(-1, list.Item(NewPacketPreview(packet)))
+	}
+
 }
