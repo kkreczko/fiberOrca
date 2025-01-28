@@ -18,6 +18,8 @@ set(SOURCES
         src/packet_handler.c
         src/globals.c
         src/globals.c
+        include/connect_and_send.h
+        src/connect_and_send.c
 )
 
 include_directories(

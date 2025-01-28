@@ -71,3 +71,7 @@ void packet_handler(u_char *user, const struct pcap_pkthdr *packethdr, const u_c
     printf("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n\n");
     packets++;
 }
+
+void packet_handler_ICP(u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr) {
+
+}

@@ -11,6 +11,7 @@ int main(int argc, char* argv[]) {
     char device[256] = {0};
     char filter[256] = {0};
     int count = 0;
+    int mode = 0;
     int opt;
 
     while ((opt = getopt(argc, argv, "hi:n:")) != -1) {
@@ -23,6 +24,9 @@ int main(int argc, char* argv[]) {
                 break;
             case 'n':
                 count = atoi(optarg);
+                break;
+            case 'v':
+                mode = 1;
                 break;
             default:
                 fprintf(stderr, "Invalid option\n");
@@ -52,10 +56,18 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
 
-    if (pcap_loop(handle, count, packet_handler, NULL) < 0) {
-        fprintf(stderr, "pcap_loop failed: %s\n", pcap_geterr(handle));
-        pcap_close(handle);
-        return EXIT_FAILURE;
+    if (mode) {
+        if (pcap_loop(handle, count, packet_handler, NULL) < 0) {
+            fprintf(stderr, "pcap_loop failed: %s\n", pcap_geterr(handle));
+            pcap_close(handle);
+            return EXIT_FAILURE;
+        }
+    } else {
+        if (pcap_loop(handle, count, packet_handler_ICP, NULL) < 0) {
+            fprintf(stderr, "pcap_loop failed: %s\n", pcap_geterr(handle));
+            pcap_close(handle);
+            return EXIT_FAILURE;
+        }
     }
 
     stop_capture(0);
