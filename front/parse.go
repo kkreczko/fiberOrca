@@ -1,0 +1,5 @@
+package front
+
+func parseSocketData() {
+
+}
