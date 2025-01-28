@@ -6,6 +6,7 @@ import (
 )
 
 // Session is a struct that represents a application session
+// It implements the Model interface
 type Session struct {
 	collectedPackets []Packet
 	filter           Filter

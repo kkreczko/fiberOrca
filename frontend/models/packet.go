@@ -24,6 +24,7 @@ type Transport struct {
 }
 
 // Packet is a struct that represents a packet
+// It implements the Item interface
 type Packet struct {
 	ID        int
 	DataLink  DataLink
