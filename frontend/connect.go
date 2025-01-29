@@ -1,6 +1,7 @@
 package main
 
 import (
+    "bufio"
 	"fmt"
 	"log"
 	"os"
@@ -38,21 +39,19 @@ func connectToSocket() {
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
 
-	buffer := make([]byte, 1024)
-	for {
-		n, err := conn.Read(buffer)
+	scanner := bufio.NewScanner(conn)
+	for scanner.Scan() {
+		packet, err := parsePacket(scanner.Bytes())
 		if err != nil {
-			if err.Error() != "EOF" {
-				log.Println("Reading error bruv", err)
-			}
-			return
+		    log.Println("Parsing ewwow: ", err)
+		    continue
 		}
-
-		data := buffer[:n]
-		parsedData, err = parsePacket(data)
-		if err != nil {
-			log.Println("Parsing error bruv", err)
-		}
-		outputData(parsedData)
+        if packet != nil {
+            outputData(packet)
+        }
 	}
+
+    if err := scanner.Err(); err != nil {
+        log.Println("Scanner error:", err)
+    }
 }

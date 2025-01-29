@@ -1,6 +1,14 @@
 package main
 
-func outputData(Packet packet) {
+import (
+    "fmt"
+)
+
+func outputData(packet *Packet) {
+    if packet == nil {
+        return
+    }
+
 	fmt.Printf("Protocol: %s\n", packet.Protocol)
 	fmt.Printf("Source: %s:%d\n", packet.SourceIP, packet.SourcePort)
 	fmt.Printf("Destination: %s:%d\n", packet.DestIP, packet.DestPort)

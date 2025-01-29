@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+    "errors"
 	"strconv"
 	"strings"
 	"time"
@@ -17,16 +17,14 @@ type Packet struct {
 	TTL 		int
 }
 
-func parsePacket(packet []byte) (*Packet, error) {
+func parsePacket(packetData []byte) (*Packet, error) {
+    data := string(packetData)
 	data = strings.TrimRight(data, "\x00")
 	data = strings.TrimSpace(data)
 
 	parts := strings.Split(data, ";")
-	if (len(parts) != 7) {
-		return nil, errors.New("invalid packet")
-	}
 
-	srcPort, err := strconv.Atoi(parts[2])
+	srcPort, err := strconv.Atoi(parts[1])
 	if err != nil {
 		return nil, err
 	}
@@ -36,10 +34,21 @@ func parsePacket(packet []byte) (*Packet, error) {
 		return nil, err
 	}
 
-	timestamp, err := strconv.ParseInt(parts[5], 10, 64)
-	if err != nil {
-		return nil, err
-	}
+	timestampParts := strings.Split(parts[5], ".")
+    if len(timestampParts) != 2 {
+        return nil, errors.New("invalid timestamp format")
+    }
+
+    seconds, err := strconv.ParseInt(timestampParts[0], 10, 64)
+    if err != nil {
+        return nil, err
+    }
+
+    microseconds, err := strconv.ParseInt(timestampParts[1], 10, 64)
+    if err != nil {
+        return nil, err
+    }
+    nanoseconds := microseconds * 1000
 
 	ttl, err := strconv.Atoi(parts[6])
 	if err != nil {
@@ -52,7 +61,7 @@ func parsePacket(packet []byte) (*Packet, error) {
 		SourceIP: 	parts[2],
 		DestIP: 	parts[3],
 		DestPort: 	dstPort,
-		Timestamp: 	time.Unix(timestamp, 0),
+		Timestamp:  time.Unix(seconds, nanoseconds),
 		TTL: 		ttl,
 	}
 
