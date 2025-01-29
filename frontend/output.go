@@ -4,6 +4,8 @@ import (
     "fmt"
 )
 
+// TEMPORARY OUTPUT FUNCTION IT WILL BE CHANGED FOR BUBBLETEA INTEGRATION PURPOSES
+// FOR NOW IT WORKS
 func outputData(packet *Packet) {
     if packet == nil {
         return

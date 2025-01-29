@@ -17,6 +17,8 @@ type Packet struct {
 	TTL 		int
 }
 
+// THIS FUNCTION PARSES INCOMING PACKETS INTO COOL AND NICE! PACKET TYPE STRUCTURES
+// IT JUST WORKS?
 func parsePacket(packetData []byte) (*Packet, error) {
     data := string(packetData)
 	data = strings.TrimRight(data, "\x00")

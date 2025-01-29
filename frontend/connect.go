@@ -11,6 +11,9 @@ import (
 // IT MIGHT BE ADDED SOMEWHERE AS ENVIRONMENTAL VARIABLE
 const SOCKET_PATH = "/tmp/fiber_orcas.sock"
 
+// THIS FUNCTION CONNECTS TO CERTAIN UNIX SOCKET AND ACCEPTS ANY INCOMING MESSAGES
+// THEN IT CALLBACKS OUR HANDLER FUNCTION THAT READS PACKETS FROM TEMPORARY BUFFER AND DOES SOMETHING WITH THEM
+// 1. CONNECT -> 2. READ -> 3. PARSE -> 4. OUTPUT -> REPEAT 2
 func connectToSocket() {
 	if err := os.Remove(SOCKET_PATH); err != nil && !os.IsNotExist(err) {
 		log.Fatal(err)
@@ -21,9 +24,6 @@ func connectToSocket() {
 		log.Fatal(err)
 	}
 	defer listener.Close()
-
-	// TO BE DELETED, USED FOR DEVELOPMENT PURPOSES, DEBUG MODE CAN BE ADDED LATER
-	fmt.Println("Listening on ", SOCKET_PATH)
 
 	for {
 		conn, err := listener.Accept()
@@ -36,6 +36,11 @@ func connectToSocket() {
 	}
 }
 
+// FUNCTION THAT GETS PACKETS FROM SOCKET AND DOES SOMETHING WITH THEM
+// NO RESEARCH WAS DONE WHETHER IT IS THE MOST MEMORY EFFICIENT IMPLEMENTATION
+// NO RESEARCH WAS DONE WHETHER ANY PACKETS ARE LOST
+// IT CAUGHT IMPORTANT ONES DURING VERY EXTENSIVE :rofl: TESTING
+// IT JUST WORKS
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
 
@@ -43,7 +48,7 @@ func handleConnection(conn net.Conn) {
 	for scanner.Scan() {
 		packet, err := parsePacket(scanner.Bytes())
 		if err != nil {
-		    log.Println("Parsing ewwow: ", err)
+		    log.Println("Parsing error: ", err)
 		    continue
 		}
         if packet != nil {
