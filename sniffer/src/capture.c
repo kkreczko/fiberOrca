@@ -13,11 +13,11 @@ pcap_t* create_pcap_handle(char* device, char* filter) {
 
     if (!device[0]) {
         if (pcap_findalldevs(&devices, errbuf) == PCAP_ERROR) {
-            fprintf(stderr, "pcap_findalldevs(): %s\n", errbuf);
+            perror("pcap_findalldevs");
             return NULL;
         }
         if (devices == NULL) {
-            fprintf(stderr, "No devices found\n");
+            perror("pcap_findalldevs");
             return NULL;
         }
         strncpy(device, devices[0].name, 255);
@@ -26,26 +26,26 @@ pcap_t* create_pcap_handle(char* device, char* filter) {
     }
 
     if (pcap_lookupnet(device, &srcip, &netmask, errbuf) == PCAP_ERROR) {
-        fprintf(stderr, "pcap_lookupnet(): %s\n", errbuf);
+        perror("pcap_lookupnet");
         netmask = 0;
         srcip = 0;
     }
 
     handle = pcap_open_live(device, BUFSIZ, 1, 1000, errbuf);
     if (handle == NULL) {
-        fprintf(stderr, "pcap_open_live(): %s\n", errbuf);
+        perror("pcap_open_live");
         return NULL;
     }
 
     if (filter[0] != '\0') {
         if (pcap_compile(handle, &bpf, filter, 0, netmask) == PCAP_ERROR) {
-            fprintf(stderr, "pcap_compile(): %s\n", pcap_geterr(handle));
+            perror("pcap_compile");
             pcap_close(handle);
             return NULL;
         }
 
         if (pcap_setfilter(handle, &bpf) == PCAP_ERROR) {
-            fprintf(stderr, "pcap_setfilter(): %s\n", pcap_geterr(handle));
+            perror("pcap_setfilter");
             pcap_close(handle);
             return NULL;
         }
@@ -63,7 +63,7 @@ int get_link_header_len(pcap_t *handle) {
     int linktype;
 
     if ((linktype = pcap_datalink(handle)) == PCAP_ERROR) {
-        fprintf(stderr, "pcap_datalink(): %s\n", pcap_geterr(handle));
+        perror("pcap_datalink");
         return 0;
     }
 
@@ -81,7 +81,7 @@ int get_link_header_len(pcap_t *handle) {
     }
 }
 
-void stop_capture(int sig_number) {
+void stop_capture() {
     struct pcap_stat stats;
 
     if (handle && pcap_stats(handle, &stats) >= 0) {
@@ -93,6 +93,13 @@ void stop_capture(int sig_number) {
     if (handle) {
         pcap_close(handle);
     }
+
+    exit(EXIT_SUCCESS);
+}
+
+void stop_capture_IPC() {
+    if (handle)
+        pcap_close(handle);
 
     exit(EXIT_SUCCESS);
 }

@@ -6,11 +6,11 @@
 #include <string.h>
 #include <unistd.h>
 
-//TODO switch from printing to ICP communication with bubbletea process
 int main(int argc, char* argv[]) {
     char device[256] = {0};
     char filter[256] = {0};
     int count = 0;
+    int is_verbose = 0;
     int opt;
 
     while ((opt = getopt(argc, argv, "hi:n:")) != -1) {
@@ -24,8 +24,11 @@ int main(int argc, char* argv[]) {
             case 'n':
                 count = atoi(optarg);
                 break;
+            case 'v':
+                is_verbose = 1;
+                break;
             default:
-                fprintf(stderr, "Invalid option\n");
+                perror("Unknown option");
                 return EXIT_FAILURE;
         }
     }
@@ -37,9 +40,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    signal(SIGINT, stop_capture);
-    signal(SIGTERM, stop_capture);
-    signal(SIGQUIT, stop_capture);
+
 
     handle = create_pcap_handle(device, filter);
     if (handle == NULL) {
@@ -52,12 +53,27 @@ int main(int argc, char* argv[]) {
         return EXIT_FAILURE;
     }
 
-    if (pcap_loop(handle, count, packet_handler, NULL) < 0) {
-        fprintf(stderr, "pcap_loop failed: %s\n", pcap_geterr(handle));
-        pcap_close(handle);
-        return EXIT_FAILURE;
+    if (is_verbose) {
+        signal(SIGINT, stop_capture);
+        signal(SIGTERM, stop_capture);
+        signal(SIGQUIT, stop_capture);
+        if (pcap_loop(handle, count, packet_handler, NULL) < 0) {
+            perror("pcap_loop()");
+            pcap_close(handle);
+            return EXIT_FAILURE;
+        }
+        stop_capture();
+    } else {
+        signal(SIGINT, stop_capture_IPC);
+        signal(SIGTERM, stop_capture_IPC);
+        signal(SIGQUIT, stop_capture_IPC);
+        if (pcap_loop(handle, count, packet_handler_IPC, NULL) < 0) {
+            perror("pcap_loop()");
+            pcap_close(handle);
+            return EXIT_FAILURE;
+        }
+        stop_capture_IPC();
     }
 
-    stop_capture(0);
     return EXIT_SUCCESS;
 }

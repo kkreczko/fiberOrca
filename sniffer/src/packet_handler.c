@@ -1,6 +1,12 @@
-#include "packet_handler.h"
+#include <packet_handler.h>
+#include <connect_and_send.h>
+#include <parse_packet.h>
+
 #include <arpa/inet.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 //WARN When switching to ICP this will have to be changed, or we should add new function that will work only with ICP
 //we might leave non-ICP functionality of this program for UX
@@ -70,4 +76,28 @@ void packet_handler(u_char *user, const struct pcap_pkthdr *packethdr, const u_c
 
     printf("+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+\n\n");
     packets++;
+}
+
+void packet_handler_IPC(u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr) {
+    static int sock = -1;
+
+    if (sock == -1) {
+        sock = create_socket();
+        if (sock == -1) {
+            perror("create_socket()");
+            return;
+        }
+    }
+
+    packetptr += linkhdrlen;
+
+    if (((struct ip *)packetptr)->ip_v != 4) {
+        return;
+    }
+
+    char *packet_str = parse_packet(&packethdr->ts, packetptr);
+    if (send_data(sock, packet_str, strlen(packet_str)) == -1) {
+        close(sock);
+        sock = -1;
+    }
 }
