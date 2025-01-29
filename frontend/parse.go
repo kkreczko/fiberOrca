@@ -1,26 +1,26 @@
 package main
 
 import (
-    "errors"
+	"errors"
 	"strconv"
 	"strings"
 	"time"
 )
 
 type Packet struct {
-	Protocol 	string
-	SourcePort 	int
-	SourceIP 	string
-	DestIP 		string
-	DestPort 	int
-	Timestamp 	time.Time
-	TTL 		int
+	Protocol   string
+	SourcePort int
+	SourceIP   string
+	DestIP     string
+	DestPort   int
+	Timestamp  time.Time
+	TTL        int
 }
 
 // THIS FUNCTION PARSES INCOMING PACKETS INTO COOL AND NICE! PACKET TYPE STRUCTURES
 // IT JUST WORKS?
 func parsePacket(packetData []byte) (*Packet, error) {
-    data := string(packetData)
+	data := string(packetData)
 	data = strings.TrimRight(data, "\x00")
 	data = strings.TrimSpace(data)
 
@@ -37,34 +37,34 @@ func parsePacket(packetData []byte) (*Packet, error) {
 	}
 
 	timestampParts := strings.Split(parts[5], ".")
-    if len(timestampParts) != 2 {
-        return nil, errors.New("invalid timestamp format")
-    }
+	if len(timestampParts) != 2 {
+		return nil, errors.New("invalid timestamp format")
+	}
 
-    seconds, err := strconv.ParseInt(timestampParts[0], 10, 64)
-    if err != nil {
-        return nil, err
-    }
+	seconds, err := strconv.ParseInt(timestampParts[0], 10, 64)
+	if err != nil {
+		return nil, err
+	}
 
-    microseconds, err := strconv.ParseInt(timestampParts[1], 10, 64)
-    if err != nil {
-        return nil, err
-    }
-    nanoseconds := microseconds * 1000
+	microseconds, err := strconv.ParseInt(timestampParts[1], 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	nanoseconds := microseconds * 1000
 
 	ttl, err := strconv.Atoi(parts[6])
 	if err != nil {
 		return nil, err
 	}
 
-	packet := &Packet {
-		Protocol: 	parts[0],
+	packet := &Packet{
+		Protocol:   parts[0],
 		SourcePort: srcPort,
-		SourceIP: 	parts[2],
-		DestIP: 	parts[3],
-		DestPort: 	dstPort,
+		SourceIP:   parts[2],
+		DestIP:     parts[3],
+		DestPort:   dstPort,
 		Timestamp:  time.Unix(seconds, nanoseconds),
-		TTL: 		ttl,
+		TTL:        ttl,
 	}
 
 	return packet, nil

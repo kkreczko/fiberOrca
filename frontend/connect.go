@@ -1,11 +1,10 @@
 package main
 
 import (
-    "bufio"
-	"fmt"
+	"bufio"
 	"log"
-	"os"
 	"net"
+	"os"
 )
 
 // IT MIGHT BE ADDED SOMEWHERE AS ENVIRONMENTAL VARIABLE
@@ -48,15 +47,15 @@ func handleConnection(conn net.Conn) {
 	for scanner.Scan() {
 		packet, err := parsePacket(scanner.Bytes())
 		if err != nil {
-		    log.Println("Parsing error: ", err)
-		    continue
+			log.Println("Parsing error: ", err)
+			continue
 		}
-        if packet != nil {
-            outputData(packet)
-        }
+		if packet != nil {
+			outputData(packet)
+		}
 	}
 
-    if err := scanner.Err(); err != nil {
-        log.Println("Scanner error:", err)
-    }
+	if err := scanner.Err(); err != nil {
+		log.Println("Scanner error:", err)
+	}
 }
