@@ -6,6 +6,6 @@
 #define MAX_PACKET_STRING 2048
 #define PROTO_DATA_SIZE 1024
 
-char* parse_packet(const struct pcap_pkthdr* header, const char* payload);
+char* parse_packet(const struct timeval *tv, const u_char *payload);
 
 #endif //INCLUDE_PARSE_PACKET_STRUCT_H

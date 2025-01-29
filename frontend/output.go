@@ -1,7 +1,7 @@
-package front
-
-func outputPackets() {
-	for {
-		servePacketStructs()
-	}
-}
+package main
+//
+// func outputPackets() {
+// 	for {
+// 		servePacketStructs()
+// 	}
+// }

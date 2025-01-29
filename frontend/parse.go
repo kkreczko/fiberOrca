@@ -1,5 +1,5 @@
-package front
-
-func parseSocketData() {
-
-}
+package main
+//
+// func parseSocketData() {
+//
+// }

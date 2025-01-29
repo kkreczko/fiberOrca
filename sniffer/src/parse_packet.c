@@ -68,7 +68,7 @@ char* parse_packet(const struct timeval *tv, const u_char *payload) {
     }
 
     snprintf(packet_str, MAX_PACKET_STRING,
-            "%s;%d;%s;%s;%d;%s;ID:%d;TOS:%d;TTL:%d;IPLEN:%d;%s",
+            "%s;%d;%s;%s;%d;%s;ID:%d;TOS:%d;TTL:%d;IPLEN:%d;%s\n",
             proto_str,
             src_port,
             srcip,
