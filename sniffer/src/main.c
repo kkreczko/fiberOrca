@@ -64,12 +64,12 @@ int main(int argc, char* argv[]) {
         }
         stop_capture();
     } else {
-        if (pcap_loop(handle, count, packet_handler_ICP, NULL) < 0) {
+        if (pcap_loop(handle, count, packet_handler_IPC, NULL) < 0) {
             fprintf(stderr, "pcap_loop failed: %s\n", pcap_geterr(handle));
             pcap_close(handle);
             return EXIT_FAILURE;
         }
-        stop_capture_ICP();
+        stop_capture_IPC();
     }
 
     return EXIT_SUCCESS;

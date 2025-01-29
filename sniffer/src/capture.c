@@ -97,7 +97,7 @@ void stop_capture() {
     exit(EXIT_SUCCESS);
 }
 
-void stop_capture_ICP() {
+void stop_capture_IPC() {
     if (handle)
         pcap_close(handle);
 

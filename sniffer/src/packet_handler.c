@@ -72,6 +72,6 @@ void packet_handler(u_char *user, const struct pcap_pkthdr *packethdr, const u_c
     packets++;
 }
 
-void packet_handler_ICP(u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr) {
+void packet_handler_IPC(u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr) {
 
 }
