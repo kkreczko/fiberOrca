@@ -40,9 +40,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    signal(SIGINT, stop_capture);
-    signal(SIGTERM, stop_capture);
-    signal(SIGQUIT, stop_capture);
+
 
     handle = create_pcap_handle(device, filter);
     if (handle == NULL) {
@@ -56,6 +54,9 @@ int main(int argc, char* argv[]) {
     }
 
     if (is_verbose) {
+        signal(SIGINT, stop_capture);
+        signal(SIGTERM, stop_capture);
+        signal(SIGQUIT, stop_capture);
         if (pcap_loop(handle, count, packet_handler, NULL) < 0) {
             perror("pcap_loop()");
             pcap_close(handle);
@@ -63,6 +64,9 @@ int main(int argc, char* argv[]) {
         }
         stop_capture();
     } else {
+        signal(SIGINT, stop_capture_IPC);
+        signal(SIGTERM, stop_capture_IPC);
+        signal(SIGQUIT, stop_capture_IPC);
         if (pcap_loop(handle, count, packet_handler_IPC, NULL) < 0) {
             perror("pcap_loop()");
             pcap_close(handle);
