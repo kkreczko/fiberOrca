@@ -12,11 +12,6 @@ func (s *Session) initData(width, height int) {
 	s.collectedPackets = []Packet{
 		{
 			ID: 1,
-			DataLink: DataLink{
-				SourceMAC:      "00:00:00:00:00:00",
-				DestinationMAC: "00:00:00:00:00:00",
-				Protocol:       "Ethernet",
-			},
 			Network: Network{
 				SourceIP:      "1.1.1.1",
 				DestinationIP: "2.2.2.2",
@@ -32,11 +27,6 @@ func (s *Session) initData(width, height int) {
 		},
 		{
 			ID: 2,
-			DataLink: DataLink{
-				SourceMAC:      "00:00:00:00:00:00",
-				DestinationMAC: "00:00:00:00:00:00",
-				Protocol:       "Ethernet",
-			},
 			Network: Network{
 				SourceIP:      "3.3.3.3",
 				DestinationIP: "2.2.2.2",
@@ -51,12 +41,7 @@ func (s *Session) initData(width, height int) {
 			datetime: time.Now(),
 		},
 		{
-			ID: 2,
-			DataLink: DataLink{
-				SourceMAC:      "00:00:00:00:00:00",
-				DestinationMAC: "00:00:00:00:00:00",
-				Protocol:       "Ethernet",
-			},
+			ID: 3,
 			Network: Network{
 				SourceIP:      "5.5.5.5",
 				DestinationIP: "2.2.2.2",

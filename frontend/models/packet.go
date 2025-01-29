@@ -5,11 +5,12 @@ import (
 )
 
 // DataLink is a struct that represents the data link layer of a packet
-type DataLink struct {
-	SourceMAC      string
-	DestinationMAC string
-	Protocol       string
-}
+// TODO: Implement the DataLink struct
+//type DataLink struct {
+//	SourceMAC      string
+//	DestinationMAC string
+//	Protocol       string
+//}
 
 // Network is a struct that represents the network layer of a packet
 type Network struct {
@@ -29,23 +30,10 @@ type Transport struct {
 // It implements the Item interface
 type Packet struct {
 	ID        int
-	DataLink  DataLink
 	Network   Network
 	Transport Transport
 	TTL       int
 	datetime  time.Time
-}
-
-func (p Packet) SourceMac() string {
-	return p.DataLink.SourceMAC
-}
-
-func (p Packet) DestinationMac() string {
-	return p.DataLink.DestinationMAC
-}
-
-func (p Packet) DataLinkProtocol() string {
-	return p.DataLink.Protocol
 }
 
 func (p Packet) SourceIP() string {
@@ -80,10 +68,9 @@ func (p Packet) Datetime() time.Time {
 	return p.datetime
 }
 
-func NewPacket(id int, dataLink DataLink, network Network, transport Transport, ttl int, datetime time.Time) Packet {
+func NewPacket(id int, network Network, transport Transport, ttl int, datetime time.Time) Packet {
 	return Packet{
 		ID:        id,
-		DataLink:  dataLink,
 		Network:   network,
 		Transport: transport,
 		TTL:       ttl,

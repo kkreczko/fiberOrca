@@ -51,6 +51,10 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			s.loaded = true
 		}
 	case tea.KeyMsg:
+		if !s.loaded {
+			return s, nil
+		}
+
 		switch msg.String() {
 		case "q", "ctrl+c":
 			s.quit = true
@@ -63,14 +67,20 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				}
 			}
 			modelList[session] = s
-			var cmd tea.Cmd
-			return modelList[packet].Update(cmd)
+			return modelList[packet].Update(nil)
 		}
+
+		var cmd tea.Cmd
+		s.packetPreviews, cmd = s.packetPreviews.Update(msg)
+		return s, cmd
+
 	case Packet:
 		return s, s.AddPacket(msg)
 	}
+
+	// Handle any other updates to the list
 	var cmd tea.Cmd
-	s.packetPreviews, cmd = s.packetPreviews.Update(cmd)
+	s.packetPreviews, cmd = s.packetPreviews.Update(msg)
 	return s, cmd
 }
 
@@ -87,7 +97,14 @@ func (s *Session) View() string {
 
 // NewSession creates a new session
 func NewSession() *Session {
-	return &Session{}
+	packetList := list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
+
+	return &Session{
+		packetPreviews: packetList,
+		startTime:      time.Now(),
+		loaded:         false,
+		quit:           false,
+	}
 }
 
 // AddPacket adds a packet to the session

@@ -52,15 +52,12 @@ func NewPacketView(p Packet, session *Session, width, height int) PacketView {
 		{Title: "Data", Width: width / 2},
 	}
 	rows := []table.Row{
-		{"Source MAC", p.SourceMac()},
-		{"Destination MAC", p.DestinationMac()},
-		{"Protocol", p.DataLinkProtocol()},
 		{"Source IP", p.SourceIP()},
 		{"Destination IP", p.DestinationIP()},
-		{"Protocol", p.NetworkProtocol()},
+		{"IP Protocol", p.NetworkProtocol()},
 		{"Source Port", p.SourcePort()},
 		{"Destination Port", p.DestinationPort()},
-		{"Protocol", p.TransportProtocol()},
+		{"Transport Protocol", p.TransportProtocol()},
 		{"TTL", strconv.Itoa(p.TTL)},
 		{"Datetime", p.datetime.String()},
 	}
