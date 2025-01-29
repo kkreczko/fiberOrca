@@ -3,7 +3,10 @@
 
 #include <pcap.h>
 
+#define SOCKET_PATH "/tmp/fiber_orcas.sock"
+#define BUFFER_SIZE 4096
+
 int create_socket();
-int send_packet(int sockfd, struct pcap_pkthdr* header);
+int send_data(int sock, const char* data, size_t len);
 
 #endif // INCLUDE_CONNECT_AND_SEND_H

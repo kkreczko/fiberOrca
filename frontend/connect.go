@@ -53,7 +53,5 @@ func handleConnection(conn net.Conn) {
 		// CHAIN OF PARSE -> OUTPUT -> SMILE -> HAVE FUN -> REPEAT?, WILL BE ADDED
 		fmt.Println(string(data))
 
-		// TO BE CHANGED ADDED JUST FOR FUNSIES WE DONT NEED TO SEND OK TO BACKEND AS IT DOESNT CARE ABOUT THAT
-		conn.Write([]byte("OK"))
 	}
 }

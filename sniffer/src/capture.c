@@ -81,7 +81,7 @@ int get_link_header_len(pcap_t *handle) {
     }
 }
 
-void stop_capture(int sig_number) {
+void stop_capture() {
     struct pcap_stat stats;
 
     if (handle && pcap_stats(handle, &stats) >= 0) {
@@ -93,6 +93,13 @@ void stop_capture(int sig_number) {
     if (handle) {
         pcap_close(handle);
     }
+
+    exit(EXIT_SUCCESS);
+}
+
+void stop_capture_ICP() {
+    if (handle)
+        pcap_close(handle);
 
     exit(EXIT_SUCCESS);
 }
