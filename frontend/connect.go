@@ -38,7 +38,7 @@ func connectToSocket() {
 func handleConnection(conn net.Conn) {
 	defer conn.Close()
 
-	buffer := make([]byte, 4096)
+	buffer := make([]byte, 1024)
 	for {
 		n, err := conn.Read(buffer)
 		if err != nil {
@@ -49,9 +49,10 @@ func handleConnection(conn net.Conn) {
 		}
 
 		data := buffer[:n]
-		// TO BE CHANGED
-		// CHAIN OF PARSE -> OUTPUT -> SMILE -> HAVE FUN -> REPEAT?, WILL BE ADDED
-		fmt.Println(string(data))
-
+		parsedData, err = parsePacket(data)
+		if err != nil {
+			log.Println("Parsing error bruv", err)
+		}
+		outputData(parsedData)
 	}
 }
