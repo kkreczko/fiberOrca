@@ -92,7 +92,6 @@ void packet_handler_IPC(u_char *user, const struct pcap_pkthdr *packethdr, const
     packetptr += linkhdrlen;
 
     if (((struct ip *)packetptr)->ip_v != 4) {
-        perror("Not an IPv4 packet. Skipping...\n\n");
         return;
     }
 
