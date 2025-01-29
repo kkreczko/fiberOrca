@@ -84,7 +84,7 @@ void packet_handler_IPC(u_char *user, const struct pcap_pkthdr *packethdr, const
     if (sock == -1) {
         sock = create_socket();
         if (sock == -1) {
-            fprintf(stderr, "Could not create socket\n");
+            perror("create_socket()");
             return;
         }
     }
@@ -92,7 +92,7 @@ void packet_handler_IPC(u_char *user, const struct pcap_pkthdr *packethdr, const
     packetptr += linkhdrlen;
 
     if (((struct ip *)packetptr)->ip_v != 4) {
-        fprintf(stderr, "Not an IPv4 packet. Skipping...\n\n");
+        perror("Not an IPv4 packet. Skipping...\n\n");
         return;
     }
 

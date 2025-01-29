@@ -6,7 +6,6 @@
 #include <string.h>
 #include <unistd.h>
 
-//TODO switch from printing to ICP communication with bubbletea process
 int main(int argc, char* argv[]) {
     char device[256] = {0};
     char filter[256] = {0};
@@ -29,7 +28,7 @@ int main(int argc, char* argv[]) {
                 is_verbose = 1;
                 break;
             default:
-                fprintf(stderr, "Invalid option\n");
+                perror("Unknown option");
                 return EXIT_FAILURE;
         }
     }
@@ -58,14 +57,14 @@ int main(int argc, char* argv[]) {
 
     if (is_verbose) {
         if (pcap_loop(handle, count, packet_handler, NULL) < 0) {
-            fprintf(stderr, "pcap_loop failed: %s\n", pcap_geterr(handle));
+            perror("pcap_loop()");
             pcap_close(handle);
             return EXIT_FAILURE;
         }
         stop_capture();
     } else {
         if (pcap_loop(handle, count, packet_handler_IPC, NULL) < 0) {
-            fprintf(stderr, "pcap_loop failed: %s\n", pcap_geterr(handle));
+            perror("pcap_loop()");
             pcap_close(handle);
             return EXIT_FAILURE;
         }
