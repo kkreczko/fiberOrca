@@ -8,11 +8,15 @@ import (
 )
 
 func main() {
-  connectToSocket()
+	ch := make(chan string, 1)
 	s := models.NewSession()
+	go connectToSocket(s, ch)
 	p := tea.NewProgram(s)
 	if err := p.Start(); err != nil {
 		fmt.Println("Error starting program:", err)
 		os.Exit(1)
 	}
+	ch <- "exit"
+	close(ch)
+	fmt.Println("Hello")
 }
