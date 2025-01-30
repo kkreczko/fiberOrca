@@ -49,6 +49,7 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			style.Height(height)
 			s.initData(width, height)
 			s.loaded = true
+			s.filter = NewFilter(s, width, height)
 		}
 	case tea.KeyMsg:
 		if !s.loaded {
@@ -60,6 +61,9 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			s.quit = true
 			return s, tea.Quit
 		case "enter":
+			if len(s.packetPreviews.Items()) == 0 {
+				return s, nil
+			}
 			ID := s.packetPreviews.SelectedItem().(PacketPreview).ID
 			for _, p := range s.collectedPackets {
 				if p.ID == ID {
@@ -68,6 +72,15 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			modelList[session] = s
 			return modelList[packet].Update(nil)
+		case "/":
+			// Create a fresh filter and apply it to the session
+			newFilter := NewFilter(s, width, height)
+			modelList[filter] = newFilter
+			return modelList[filter], modelList[filter].Init()
+		case "r": // Add a way to reset filter with 'r' key
+			s.filter.Reset()
+			s.updateFilteredView()
+			return s, nil
 		}
 
 		var cmd tea.Cmd
@@ -75,10 +88,10 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return s, cmd
 
 	case Packet:
+		s.collectedPackets = append(s.collectedPackets, msg)
 		return s, s.AddPacket(msg)
 	}
 
-	// Handle any other updates to the list
 	var cmd tea.Cmd
 	s.packetPreviews, cmd = s.packetPreviews.Update(msg)
 	return s, cmd
@@ -109,5 +122,25 @@ func NewSession() *Session {
 
 // AddPacket adds a packet to the session
 func (s *Session) AddPacket(p Packet) tea.Cmd {
-	return s.packetPreviews.InsertItem(-1, list.Item(NewPacketPreview(p)))
+	return s.packetPreviews.InsertItem(-1, NewPacketPreview(p))
+}
+
+func (s *Session) updateFilteredView() {
+	var filteredItems []list.Item
+
+	// If filter is not active, show all packets
+	if !s.filter.IsActive() {
+		for _, packet := range s.collectedPackets {
+			filteredItems = append(filteredItems, NewPacketPreview(packet))
+		}
+	} else {
+		// Otherwise, apply filter
+		for _, packet := range s.collectedPackets {
+			if s.filter.Matches(packet) {
+				filteredItems = append(filteredItems, NewPacketPreview(packet))
+			}
+		}
+	}
+
+	s.packetPreviews.SetItems(filteredItems)
 }
