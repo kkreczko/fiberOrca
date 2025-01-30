@@ -30,7 +30,6 @@ func (m PacketView) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 		case "q", "ctrl+c":
 			return m.session, cmd
-
 		}
 	}
 	m.table, cmd = m.table.Update(msg)
