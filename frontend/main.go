@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+  connectToSocket()
 	s := models.NewSession()
 	p := tea.NewProgram(s)
 	if err := p.Start(); err != nil {
