@@ -6,8 +6,8 @@ if [ "$EUID" -ne 0 ]; then
     exit
 fi
 
-FRONTEND="./../release/fiberOrca"
-BACKEND="./../release/network_analyzer"
+FRONTEND="./release/fiberOrca"
+BACKEND="./release/network_analyzer"
 
 $FRONTEND &
 FRONTEND_PID=$!
