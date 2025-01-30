@@ -27,7 +27,7 @@ cd fiberOrca
 2. Install libpcap dependencies (you need to have make, gcc, bison and flex installed for libpcap to install):
 ```bash
 chmod +x /scripts/install_libpcap.sh
-sudo ./release/install_libpcap.sh
+sudo ./scripts/install_libpcap.sh
 ```
 
 ## Running
