@@ -39,7 +39,7 @@ chmod +x scripts/run.sh
 sudo ./scripts/run.sh
 ```
 
-Out of the box functionality of running this program from anywhere within system will be added later. For now you can add alias of absolute path to run.sh to your .bashrc file. 
+Out of the box functionality of running this program from anywhere within system will be added later.
 
 ## License
 
