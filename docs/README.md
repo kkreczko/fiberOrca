@@ -30,7 +30,7 @@ chmod +x scripts/install_libpcap.sh
 sudo ./scripts/install_libpcap.sh
 ```
 
-## Running
+## Running from fiberOrca's directory
 
 The project includes a run script that handles starting both components:
 
@@ -38,6 +38,8 @@ The project includes a run script that handles starting both components:
 chmod +x scripts/run.sh
 sudo ./scripts/run.sh
 ```
+
+Out of the box functionality of running this program from anywhere within system will be added later. For now you can add alias of absolute path to run.sh to your .bashrc file. 
 
 ## License
 
