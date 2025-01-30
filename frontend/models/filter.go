@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
 	"time"
@@ -24,7 +25,7 @@ type Filter struct {
 }
 
 // NewFilter creates a new filter
-func NewFilter(s *Session, width, height int) Filter {
+func NewFilter(s *Session, width, height int) *Filter {
 	m := Filter{
 		width:   width,
 		height:  height,
@@ -43,7 +44,13 @@ func NewFilter(s *Session, width, height int) Filter {
 			huh.NewSelect[string]().
 				Title("Transport Protocol").
 				Key("Transport Protocol").
-				Options(huh.NewOptions("UDP", "TCP", "UNKNOWN")...).
+				Options(
+					huh.NewOption("Any", ""),
+					huh.NewOption("TCP", "TCP"),
+					huh.NewOption("UDP", "UDP"),
+					huh.NewOption("IMAP", "IMAP"),
+					huh.NewOption("UNKNOWN", "UNKNOWN"),
+				).
 				Value(&m.transportProtocol),
 			huh.NewInput().
 				Title("Sender Port").
@@ -68,14 +75,14 @@ func NewFilter(s *Session, width, height int) Filter {
 		WithHeight(height).
 		WithWidth(width)
 
-	return m
+	return &m
 }
 
 func (m Filter) Init() tea.Cmd {
 	return m.form.Init()
 }
 
-func (m Filter) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *Filter) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -158,7 +165,13 @@ func (m *Filter) Reset() {
 			huh.NewSelect[string]().
 				Title("Transport Protocol").
 				Key("Transport Protocol").
-				Options(huh.NewOptions("UDP", "TCP", "UNKNOWN")...).
+				Options(
+					huh.NewOption("Any", ""),
+					huh.NewOption("TCP", "TCP"),
+					huh.NewOption("UDP", "UDP"),
+					huh.NewOption("IMAP", "IMAP"),
+					huh.NewOption("UNKNOWN", "UNKNOWN"),
+				).
 				Value(&m.transportProtocol),
 			huh.NewInput().
 				Title("Sender Port").
@@ -186,34 +199,44 @@ func (m *Filter) Reset() {
 
 // Matches checks if a packet matches the filter criteria
 func (m Filter) Matches(packet Packet) bool {
+
 	if !m.active {
 		return true
 	}
 
-	// Check IP if specified
-	if m.IP != "" && packet.SourceIP() != m.IP {
-		return false
+	// Check IP if specified (check if it matches either source or destination)
+	fmt.Printf("Filter IP: '%s', Packet IP: '%s'\n", m.IP, packet.SourceIP())
+
+	if m.IP != "" {
+		fmt.Println(packet.Protocol())
+		if packet.SourceIP() != m.IP {
+			return false
+		}
 	}
 
-	// Check ports if specified
-	if m.senderPort != "" && packet.SourcePort() != m.senderPort {
-		return false
+	// Check ports if specified (check if port matches either source or destination)
+	if m.senderPort != "" {
+		if packet.SourcePort() != m.senderPort {
+			return false
+		}
 	}
-	if m.receiverPort != "" && packet.DestinationPort() != m.receiverPort {
-		return false
+	if m.receiverPort != "" {
+		if packet.DestinationPort() != m.receiverPort {
+			return false
+		}
 	}
 
-	// Check protocols if specified
-	if m.transportProtocol != "" && packet.Protocol() != m.transportProtocol {
-		//fmt.Println(packet.Protocol(), m.transportProtocol)
-		return false
+	if m.transportProtocol != "" {
+		if packet.Protocol() != m.transportProtocol {
+			return false
+		}
 	}
 
 	// Check time range if specified
-	if !m.startTime.IsZero() && packet.datetime.Before(m.startTime) {
+	if !m.startTime.IsZero() && packet.Datetime().Before(m.startTime) {
 		return false
 	}
-	if !m.endTime.IsZero() && packet.datetime.After(m.endTime) {
+	if !m.endTime.IsZero() && packet.Datetime().After(m.endTime) {
 		return false
 	}
 
