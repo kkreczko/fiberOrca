@@ -1,6 +1,6 @@
 # fiberOrca
 
-Real-time network packet analyzer with frontend written in Go and backend in C. The application uses Unix Domain Sockets for IPC communication between components.
+Real-time network packet analyzer accessible only through terminal.
 
 ## Features
 
