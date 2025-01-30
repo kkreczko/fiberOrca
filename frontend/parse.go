@@ -8,20 +8,11 @@ import (
 	"time"
 )
 
-type Packet struct {
-	Protocol   string
-	SourcePort int
-	SourceIP   string
-	DestIP     string
-	DestPort   int
-	Timestamp  time.Time
-	TTL        int
-}
-
 // THIS FUNCTION PARSES INCOMING PACKETS INTO COOL AND NICE! PACKET TYPE STRUCTURES
 // IT JUST WORKS?
 func parsePacket(packetData []byte) (*models.Packet, error) {
 	data := string(packetData)
+
 	data = strings.TrimRight(data, "\x00")
 	data = strings.TrimSpace(data)
 

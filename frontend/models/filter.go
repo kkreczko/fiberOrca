@@ -205,6 +205,7 @@ func (m Filter) Matches(packet Packet) bool {
 
 	// Check protocols if specified
 	if m.transportProtocol != "" && packet.Protocol() != m.transportProtocol {
+		//fmt.Println(packet.Protocol(), m.transportProtocol)
 		return false
 	}
 
