@@ -18,5 +18,4 @@ func main() {
 	}
 	ch <- "exit"
 	close(ch)
-	fmt.Println("Hello")
 }

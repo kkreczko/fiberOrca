@@ -45,9 +45,11 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		width = msg.Width
 		height = msg.Height - 5
 		if !s.loaded {
+			packetList := list.New([]list.Item{}, list.NewDefaultDelegate(), width, height)
+			packetList.Title = "Packets"
+			s.packetPreviews = packetList
 			style.Width(width)
 			style.Height(height)
-			s.initData(width, height)
 			s.loaded = true
 			s.filter = NewFilter(s, width, height)
 		}
@@ -87,9 +89,11 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		s.packetPreviews, cmd = s.packetPreviews.Update(msg)
 		return s, cmd
 
-	case Packet:
-		s.collectedPackets = append(s.collectedPackets, msg)
-		return s, s.AddPacket(msg)
+	case *Packet:
+		//fmt.Printf("Received packet: %v\n", msg)
+		s.collectedPackets = append(s.collectedPackets, *msg)
+		s.updateFilteredView()
+		return s, nil
 	}
 
 	var cmd tea.Cmd
@@ -110,19 +114,14 @@ func (s *Session) View() string {
 
 // NewSession creates a new session
 func NewSession() *Session {
-	packetList := list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0)
+	//packetList := list.New([]list.Item{}, list.NewDefaultDelegate(), width, height)
+	//packetList.Title = "Packets"
 
 	return &Session{
-		packetPreviews: packetList,
-		startTime:      time.Now(),
-		loaded:         false,
-		quit:           false,
+		startTime: time.Now(),
+		loaded:    false,
+		quit:      false,
 	}
-}
-
-// AddPacket adds a packet to the session
-func (s *Session) AddPacket(p Packet) tea.Cmd {
-	return s.packetPreviews.InsertItem(-1, NewPacketPreview(p))
 }
 
 func (s *Session) updateFilteredView() {
