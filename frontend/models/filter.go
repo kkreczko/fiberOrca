@@ -204,9 +204,7 @@ func (m Filter) Matches(packet Packet) bool {
 		return true
 	}
 
-	// Check IP if specified (check if it matches either source or destination)
-	fmt.Printf("Filter IP: '%s', Packet IP: '%s'\n", m.IP, packet.SourceIP())
-
+	// Check IP if specified
 	if m.IP != "" {
 		fmt.Println(packet.Protocol())
 		if packet.SourceIP() != m.IP {
