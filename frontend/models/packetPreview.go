@@ -1,9 +1,11 @@
 package models
 
+import "github.com/google/uuid"
+
 // PacketPreview is a struct that represents a preview of a packet
 // It implements the Item interface
 type PacketPreview struct {
-	ID          int
+	ID          uuid.UUID
 	title       string
 	description string
 }
@@ -12,7 +14,7 @@ func NewPacketPreview(p Packet) PacketPreview {
 	return PacketPreview{
 		ID:          p.ID,
 		title:       p.SourceIP() + ":" + p.DestinationPort(),
-		description: p.TransportProtocol(),
+		description: p.Datetime().String(),
 	}
 }
 

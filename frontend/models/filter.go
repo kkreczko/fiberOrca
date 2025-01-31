@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
 	"time"
@@ -10,23 +11,21 @@ var startTime, endTime string
 
 // Filter is a struct that represents a session filter
 type Filter struct {
-	form                *huh.Form
-	IP                  string
-	senderPort          string
-	receiverPort        string
-	networkProtocol     string
-	transportProtocol   string
-	applicationProtocol string
-	startTime           time.Time
-	endTime             time.Time
-	width               int
-	height              int
-	active              bool
-	session             *Session
+	form              *huh.Form
+	IP                string
+	senderPort        string
+	receiverPort      string
+	transportProtocol string
+	startTime         time.Time
+	endTime           time.Time
+	width             int
+	height            int
+	active            bool
+	session           *Session
 }
 
 // NewFilter creates a new filter
-func NewFilter(s *Session, width, height int) Filter {
+func NewFilter(s *Session, width, height int) *Filter {
 	m := Filter{
 		width:   width,
 		height:  height,
@@ -39,20 +38,19 @@ func NewFilter(s *Session, width, height int) Filter {
 
 	m.form = huh.NewForm(
 		huh.NewGroup(
-			huh.NewSelect[string]().
-				Title("Network Protocol").
-				Key("Network Protocol").
-				Options(huh.NewOptions("IPv4", "IPv6")...).
-				Value(&m.networkProtocol),
 			huh.NewInput().
 				Title("IP").
 				Value(&m.IP),
-		),
-		huh.NewGroup(
 			huh.NewSelect[string]().
 				Title("Transport Protocol").
 				Key("Transport Protocol").
-				Options(huh.NewOptions("UDP", "TCP")...).
+				Options(
+					huh.NewOption("Any", ""),
+					huh.NewOption("TCP", "TCP"),
+					huh.NewOption("UDP", "UDP"),
+					huh.NewOption("IMAP", "IMAP"),
+					huh.NewOption("UNKNOWN", "UNKNOWN"),
+				).
 				Value(&m.transportProtocol),
 			huh.NewInput().
 				Title("Sender Port").
@@ -77,14 +75,14 @@ func NewFilter(s *Session, width, height int) Filter {
 		WithHeight(height).
 		WithWidth(width)
 
-	return m
+	return &m
 }
 
 func (m Filter) Init() tea.Cmd {
 	return m.form.Init()
 }
 
-func (m Filter) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *Filter) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch msg.String() {
@@ -115,7 +113,6 @@ func (m Filter) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.active = m.IP != "" ||
 			m.senderPort != "" ||
 			m.receiverPort != "" ||
-			m.networkProtocol != "" ||
 			m.transportProtocol != "" ||
 			!m.startTime.IsZero() ||
 			!m.endTime.IsZero()
@@ -150,7 +147,6 @@ func (m *Filter) Reset() {
 	m.IP = ""
 	m.senderPort = ""
 	m.receiverPort = ""
-	m.networkProtocol = ""
 	m.transportProtocol = ""
 	m.startTime = time.Time{}
 	m.endTime = time.Time{}
@@ -161,81 +157,86 @@ func (m *Filter) Reset() {
 	endTime = ""
 
 	// Reset the form if it exists
-	if m.form != nil {
-		m.form = huh.NewForm(
-			huh.NewGroup(
-				huh.NewSelect[string]().
-					Title("Network Protocol").
-					Key("Network Protocol").
-					Options(huh.NewOptions("IPv4", "IPv6")...).
-					Value(&m.networkProtocol),
-				huh.NewInput().
-					Title("IP").
-					Value(&m.IP),
-			),
-			huh.NewGroup(
-				huh.NewSelect[string]().
-					Title("Transport Protocol").
-					Key("Transport Protocol").
-					Options(huh.NewOptions("UDP", "TCP")...).
-					Value(&m.transportProtocol),
-				huh.NewInput().
-					Title("Sender Port").
-					Placeholder("Sender Port").
-					Value(&m.senderPort),
-				huh.NewInput().
-					Title("Receiver Port").
-					Placeholder("Receiver Port").
-					Value(&m.receiverPort),
-			),
-			huh.NewGroup(
-				huh.NewInput().
-					Title("Start Time").
-					Placeholder("YYYY-MM-DD HH:MM:SS").
-					Value(&startTime),
-				huh.NewInput().
-					Title("End Time").
-					Placeholder("YYYY-MM-DD HH:MM:SS").
-					Value(&endTime),
-			),
-		).
-			WithHeight(m.height).
-			WithWidth(m.width)
-	}
+	m.form = huh.NewForm(
+		huh.NewGroup(
+			huh.NewInput().
+				Title("IP").
+				Value(&m.IP),
+			huh.NewSelect[string]().
+				Title("Transport Protocol").
+				Key("Transport Protocol").
+				Options(
+					huh.NewOption("Any", ""),
+					huh.NewOption("TCP", "TCP"),
+					huh.NewOption("UDP", "UDP"),
+					huh.NewOption("IMAP", "IMAP"),
+					huh.NewOption("UNKNOWN", "UNKNOWN"),
+				).
+				Value(&m.transportProtocol),
+			huh.NewInput().
+				Title("Sender Port").
+				Placeholder("Sender Port").
+				Value(&m.senderPort),
+			huh.NewInput().
+				Title("Receiver Port").
+				Placeholder("Receiver Port").
+				Value(&m.receiverPort),
+		),
+		huh.NewGroup(
+			huh.NewInput().
+				Title("Start Time").
+				Placeholder("YYYY-MM-DD HH:MM:SS").
+				Value(&startTime),
+			huh.NewInput().
+				Title("End Time").
+				Placeholder("YYYY-MM-DD HH:MM:SS").
+				Value(&endTime),
+		),
+	).
+		WithHeight(height).
+		WithWidth(width)
 }
 
 // Matches checks if a packet matches the filter criteria
 func (m Filter) Matches(packet Packet) bool {
+
 	if !m.active {
 		return true
 	}
 
-	// Check IP if specified
-	if m.IP != "" && packet.SourceIP() != m.IP {
-		return false
+	// Check IP if specified (check if it matches either source or destination)
+	fmt.Printf("Filter IP: '%s', Packet IP: '%s'\n", m.IP, packet.SourceIP())
+
+	if m.IP != "" {
+		fmt.Println(packet.Protocol())
+		if packet.SourceIP() != m.IP {
+			return false
+		}
 	}
 
-	// Check ports if specified
-	if m.senderPort != "" && packet.SourcePort() != m.senderPort {
-		return false
+	// Check ports if specified (check if port matches either source or destination)
+	if m.senderPort != "" {
+		if packet.SourcePort() != m.senderPort {
+			return false
+		}
 	}
-	if m.receiverPort != "" && packet.DestinationPort() != m.receiverPort {
-		return false
+	if m.receiverPort != "" {
+		if packet.DestinationPort() != m.receiverPort {
+			return false
+		}
 	}
 
-	// Check protocols if specified
-	if m.networkProtocol != "" && packet.NetworkProtocol() != m.networkProtocol {
-		return false
-	}
-	if m.transportProtocol != "" && packet.TransportProtocol() != m.transportProtocol {
-		return false
+	if m.transportProtocol != "" {
+		if packet.Protocol() != m.transportProtocol {
+			return false
+		}
 	}
 
 	// Check time range if specified
-	if !m.startTime.IsZero() && packet.datetime.Before(m.startTime) {
+	if !m.startTime.IsZero() && packet.Datetime().Before(m.startTime) {
 		return false
 	}
-	if !m.endTime.IsZero() && packet.datetime.After(m.endTime) {
+	if !m.endTime.IsZero() && packet.Datetime().After(m.endTime) {
 		return false
 	}
 

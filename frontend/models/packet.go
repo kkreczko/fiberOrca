@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/google/uuid"
 	"time"
 )
 
@@ -16,7 +17,6 @@ import (
 type Network struct {
 	SourceIP      string
 	DestinationIP string
-	Protocol      string
 }
 
 // Transport is a struct that represents the transport layer of a packet
@@ -29,7 +29,7 @@ type Transport struct {
 // Packet is a struct that represents a packet
 // It implements the Item interface
 type Packet struct {
-	ID        int
+	ID        uuid.UUID
 	Network   Network
 	Transport Transport
 	TTL       int
@@ -44,8 +44,8 @@ func (p Packet) DestinationIP() string {
 	return p.Network.DestinationIP
 }
 
-func (p Packet) NetworkProtocol() string {
-	return p.Network.Protocol
+func (p Packet) Protocol() string {
+	return p.Transport.Protocol
 }
 
 func (p Packet) SourcePort() string {
@@ -56,10 +56,6 @@ func (p Packet) DestinationPort() string {
 	return p.Transport.DestinationPort
 }
 
-func (p Packet) TransportProtocol() string {
-	return p.Transport.Protocol
-}
-
 func (p Packet) TTLValue() int {
 	return p.TTL
 }
@@ -68,9 +64,24 @@ func (p Packet) Datetime() time.Time {
 	return p.datetime
 }
 
-func NewPacket(id int, network Network, transport Transport, ttl int, datetime time.Time) Packet {
+func NewNetwork(sourceIP, destinationIP string) Network {
+	return Network{
+		SourceIP:      sourceIP,
+		DestinationIP: destinationIP,
+	}
+}
+
+func NewTransport(sourcePort, destinationPort, protocol string) Transport {
+	return Transport{
+		SourcePort:      sourcePort,
+		DestinationPort: destinationPort,
+		Protocol:        protocol,
+	}
+}
+
+func NewPacket(network Network, transport Transport, ttl int, datetime time.Time) Packet {
 	return Packet{
-		ID:        id,
+		ID:        uuid.New(),
 		Network:   network,
 		Transport: transport,
 		TTL:       ttl,

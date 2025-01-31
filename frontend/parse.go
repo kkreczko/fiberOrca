@@ -2,29 +2,25 @@ package main
 
 import (
 	"errors"
+	"github.com/kruczys/fiberOrca/models"
 	"strconv"
 	"strings"
 	"time"
 )
 
-type Packet struct {
-	Protocol   string
-	SourcePort int
-	SourceIP   string
-	DestIP     string
-	DestPort   int
-	Timestamp  time.Time
-	TTL        int
-}
-
 // THIS FUNCTION PARSES INCOMING PACKETS INTO COOL AND NICE! PACKET TYPE STRUCTURES
 // IT JUST WORKS?
-func parsePacket(packetData []byte) (*Packet, error) {
+func parsePacket(packetData []byte) (*models.Packet, error) {
 	data := string(packetData)
+
 	data = strings.TrimRight(data, "\x00")
 	data = strings.TrimSpace(data)
 
 	parts := strings.Split(data, ";")
+
+	protocol := parts[0]
+	sourceIP := parts[2]
+	destIP := parts[3]
 
 	srcPort, err := strconv.Atoi(parts[1])
 	if err != nil {
@@ -57,15 +53,10 @@ func parsePacket(packetData []byte) (*Packet, error) {
 		return nil, err
 	}
 
-	packet := &Packet{
-		Protocol:   parts[0],
-		SourcePort: srcPort,
-		SourceIP:   parts[2],
-		DestIP:     parts[3],
-		DestPort:   dstPort,
-		Timestamp:  time.Unix(seconds, nanoseconds),
-		TTL:        ttl,
-	}
+	networkProtocol := models.NewNetwork(sourceIP, destIP)
+	transportProtocol := models.NewTransport(strconv.Itoa(srcPort), strconv.Itoa(dstPort), protocol)
 
-	return packet, nil
+	packet := models.NewPacket(networkProtocol, transportProtocol, ttl, time.Unix(seconds, nanoseconds))
+
+	return &packet, nil
 }
