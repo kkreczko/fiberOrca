@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -41,14 +40,6 @@ func (s *Session) Init() tea.Cmd {
 }
 
 func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	//fmt.Println(fmt.Sprintf("active: %s", s.filter.active))
-	//fmt.Println(fmt.Sprintf("ip: %s", s.filter.IP))
-	//fmt.Println(fmt.Sprintf("endtime: %s", s.filter.endTime))
-	//fmt.Println(fmt.Sprintf("starttime: %s", s.filter.startTime))
-	//fmt.Println(fmt.Sprintf("receiver port: %s", s.filter.receiverPort))
-	//fmt.Println(fmt.Sprintf("sender port: %s", s.filter.senderPort))
-	//fmt.Println(fmt.Sprintf("protocol: %s", s.filter.transportProtocol))
-
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		width = msg.Width
@@ -87,7 +78,6 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// Create a fresh filter and apply it to the session
 			newFilter := NewFilter(s, width, height)
 			modelList[filter] = newFilter
-			fmt.Println(fmt.Sprintf("New filter: %s", modelList[filter]))
 			return modelList[filter], modelList[filter].Init()
 		case "r": // Add a way to reset filter with 'r' key
 			s.filter.Reset()
