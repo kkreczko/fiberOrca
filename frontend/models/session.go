@@ -90,8 +90,9 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return s, cmd
 
 	case *Packet:
-		//fmt.Printf("Received packet: %v\n", msg)
-		s.collectedPackets = append(s.collectedPackets, *msg)
+		// fmt.Printf("Received packet: %v\n", msg)
+		newPacketSlice := append([]Packet{*msg}, s.collectedPackets...)
+		s.collectedPackets = newPacketSlice
 		s.updateFilteredView()
 		return s, nil
 	}
