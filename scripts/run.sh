@@ -10,7 +10,5 @@ FRONTEND="./release/fiberOrca"
 BACKEND="./release/network_analyzer"
 
 $FRONTEND &
-FRONTEND_PID=$!
-sleep 2
 $BACKEND
-kill $FRONTEND_PID
+
