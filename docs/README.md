@@ -41,6 +41,28 @@ sudo ./scripts/run.sh
 
 Out of the box functionality of running this program from anywhere within system will be added later.
 
+
+## Navigating the program
+
+To navigate this program, use the following keybinds:
+
+### Packet list
+`q` - quit program
+
+`f` - enter filter view
+
+`r` - reset filter
+
+`enter` - enter packet view
+
+### Packet view
+`q` - go back to packet list
+
+### Filter 
+`esc` - quit filter view without applying
+
+`enter` - move to the next text input
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
