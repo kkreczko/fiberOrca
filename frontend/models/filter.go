@@ -40,7 +40,8 @@ func NewFilter(s *Session, width, height int) *Filter {
 		huh.NewGroup(
 			huh.NewInput().
 				Title("IP").
-				Value(&m.IP),
+				Value(&m.IP).
+				Validate(ValidateIP),
 			huh.NewSelect[string]().
 				Title("Transport Protocol").
 				Key("Transport Protocol").
@@ -55,21 +56,25 @@ func NewFilter(s *Session, width, height int) *Filter {
 			huh.NewInput().
 				Title("Sender Port").
 				Placeholder("Sender Port").
-				Value(&m.senderPort),
+				Value(&m.senderPort).
+				Validate(ValidatePort),
 			huh.NewInput().
 				Title("Receiver Port").
 				Placeholder("Receiver Port").
-				Value(&m.receiverPort),
+				Value(&m.receiverPort).
+				Validate(ValidatePort),
 		),
 		huh.NewGroup(
 			huh.NewInput().
 				Title("Start Time").
 				Placeholder("YYYY-MM-DD HH:MM:SS").
-				Value(&startTime),
+				Value(&startTime).
+				Validate(ValidateTime),
 			huh.NewInput().
 				Title("End Time").
 				Placeholder("YYYY-MM-DD HH:MM:SS").
-				Value(&endTime),
+				Value(&endTime).
+				Validate(ValidateTime),
 		),
 	).
 		WithHeight(height).
@@ -161,7 +166,8 @@ func (m *Filter) Reset() {
 		huh.NewGroup(
 			huh.NewInput().
 				Title("IP").
-				Value(&m.IP),
+				Value(&m.IP).
+				Validate(ValidateIP),
 			huh.NewSelect[string]().
 				Title("Transport Protocol").
 				Key("Transport Protocol").
@@ -176,21 +182,25 @@ func (m *Filter) Reset() {
 			huh.NewInput().
 				Title("Sender Port").
 				Placeholder("Sender Port").
-				Value(&m.senderPort),
+				Value(&m.senderPort).
+				Validate(ValidatePort),
 			huh.NewInput().
 				Title("Receiver Port").
 				Placeholder("Receiver Port").
-				Value(&m.receiverPort),
+				Value(&m.receiverPort).
+				Validate(ValidatePort),
 		),
 		huh.NewGroup(
 			huh.NewInput().
 				Title("Start Time").
 				Placeholder("YYYY-MM-DD HH:MM:SS").
-				Value(&startTime),
+				Value(&startTime).
+				Validate(ValidateTime),
 			huh.NewInput().
 				Title("End Time").
 				Placeholder("YYYY-MM-DD HH:MM:SS").
-				Value(&endTime),
+				Value(&endTime).
+				Validate(ValidateTime),
 		),
 	).
 		WithHeight(height).
