@@ -1,7 +1,6 @@
 package models
 
 import (
-	"fmt"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/huh"
 	"time"
@@ -216,7 +215,6 @@ func (m Filter) Matches(packet Packet) bool {
 
 	// Check IP if specified
 	if m.IP != "" {
-		fmt.Println(packet.Protocol())
 		if packet.SourceIP() != m.IP {
 			return false
 		}
