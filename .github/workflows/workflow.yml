@@ -33,7 +33,7 @@ jobs:
           git config --local user.name "GitHub Action Bot"
           git pull --rebase
           git add release/fiberOrca
-          git commit -m "chore: add frontend binary"
+          git commit -m "chore: add frontend binary" --allow-empty
       - uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
