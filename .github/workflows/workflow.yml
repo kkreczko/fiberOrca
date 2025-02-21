@@ -26,5 +26,7 @@ jobs:
         working-directory: frontend
       - run: go build *.go
         working-directory: frontend
+      - run: ls
+        working-directory: frontend
 
 
