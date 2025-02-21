@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - run: git pull --rebase
       - run: sudo chmod +x scripts/install_libpcap.sh
       - run: sudo sh scripts/install_libpcap.sh
       - run: mkdir sniffer/build
@@ -24,7 +25,6 @@ jobs:
       - run: |
           git config --local user.email "github_action@github.com"
           git config --local user.name "GitHub Action Bot"
-          git pull --rebase
           git add release/fiberOrca
           git commit -m "chore: add backend binary" --allow-empty
       - uses: ad-m/github-push-action@master
@@ -41,7 +41,7 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: 1.23.4
-      - run: go version
+      - run: git pull --rebase
       - run: go mod tidy
         working-directory: frontend
       - run: go build -o ../release/fiberOrca *.go
@@ -49,7 +49,6 @@ jobs:
       - run: |
           git config --local user.email "github_action@github.com"
           git config --local user.name "GitHub Action Bot"
-          git pull --rebase
           git add release/fiberOrca
           git commit -m "chore: add frontend binary" --allow-empty
       - uses: ad-m/github-push-action@master
