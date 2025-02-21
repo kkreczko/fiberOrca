@@ -1,13 +1,14 @@
 name: workflow.yml
 
 on: push
-#  push:
-#    branches:
-#      - main
+#  pull_request:
+#    types:
+#      - closed
 
 
 jobs:
   build-backend:
+    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: backend
@@ -15,6 +16,7 @@ jobs:
           echo "building backend"
 
   build-frontend:
+    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
