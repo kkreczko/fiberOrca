@@ -31,7 +31,7 @@ jobs:
       - run: |
           git config --local user.email "github_action@github.com"
           git config --local user.name "GitHub Action Bot"
-          git fetch
+          git pull --rebase
           git add release/fiberOrca
           git commit -m "chore: add frontend binary"
       - uses: ad-m/github-push-action@master
