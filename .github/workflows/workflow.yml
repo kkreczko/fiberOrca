@@ -8,6 +8,7 @@ on: push
 
 jobs:
   build-backend:
+    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: backend
@@ -15,6 +16,7 @@ jobs:
           echo "building backend"
 
   build-frontend:
+    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,6 +31,7 @@ jobs:
       - run: |
           git config --local user.email "github_action@github.com"
           git config --local user.name "GitHub Action Bot"
+          git fetch
           git add release/fiberOrca
           git commit -m "chore: add frontend binary"
       - uses: ad-m/github-push-action@master
