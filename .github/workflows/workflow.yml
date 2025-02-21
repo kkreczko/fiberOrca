@@ -20,6 +20,7 @@ jobs:
       - run: make
         working-directory: sniffer/build
       - run: mv network_analyzer ../../release
+        working-directory: sniffer/build
       - run: |
           git config --local user.email "github_action@github.com"
           git config --local user.name "GitHub Action Bot"
