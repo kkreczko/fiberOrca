@@ -11,9 +11,24 @@ jobs:
     # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
-      - name: backend
-        run: |
-          echo "building backend"
+      - uses: actions/checkout@v4
+      - run: mkdir sniffer/build
+      - run : cmake ..
+        working-directory: sniffer/build
+      - run: make
+        working-directory: sniffer/build
+      - run: mv network_analyzer ../../release
+      - run: |
+          git config --local user.email "github_action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          git pull --rebase
+          git add release/fiberOrca
+          git commit -m "chore: add backend binary" --allow-empty
+      - uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release
+          force_with_lease: true
 
   build-frontend:
     # if: github.event.pull_request.merged == true
