@@ -1,0 +1,62 @@
+name: workflow.yml
+
+on:
+  pull_request:
+    types:
+      - closed
+
+
+jobs:
+  build-backend:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: git pull --rebase
+      - run: sudo chmod +x scripts/install_libpcap.sh
+      - run: sudo sh scripts/install_libpcap.sh
+      - run: mkdir sniffer/build
+      - run : cmake ..
+        working-directory: sniffer/build
+      - run: make
+        working-directory: sniffer/build
+      - run: mv network_analyzer ../../release
+        working-directory: sniffer/build
+      - run: |
+          git config --local user.email "github_action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          git add release/fiberOrca
+          git commit -m "chore: add backend binary" --allow-empty
+      - uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release
+          force_with_lease: true
+
+  build-frontend:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    needs: build-backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.4
+      - run: git pull --rebase
+      - run: go mod tidy
+        working-directory: frontend
+      - run: go build -o ../release/fiberOrca *.go
+        working-directory: frontend
+      - run: |
+          git config --local user.email "github_action@github.com"
+          git config --local user.name "GitHub Action Bot"
+          git pull --rebase
+          git add release/fiberOrca
+          git commit -m "chore: add frontend binary" --allow-empty
+      - uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: release
+          force_with_lease: true
+
+
