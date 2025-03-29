@@ -7,5 +7,6 @@ pcap_t* create_pcap_handle(char* device, char* filter);
 int get_link_header_len(pcap_t *handle);
 void stop_capture();
 void stop_capture_IPC();
+int stop_capture_TEST();
 
 #endif // INCLUDE_CAPTURE_H

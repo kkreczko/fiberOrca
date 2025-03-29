@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <arpa/inet.h>
 
-pcap_t* create_pcap_handle(char* device, char* filter) {
+pcap_t *create_pcap_handle(char *device, char *filter) {
     char errbuf[PCAP_ERRBUF_SIZE];
     pcap_if_t *devices = NULL;
     struct bpf_program bpf;
@@ -77,7 +77,7 @@ int get_link_header_len(pcap_t *handle) {
             return 24;
         default:
             printf("Unsupported data link (%d)\n", linktype);
-        return 0;
+            return 0;
     }
 }
 
@@ -95,6 +95,10 @@ void stop_capture() {
     }
 
     exit(EXIT_SUCCESS);
+}
+
+int stop_capture_TEST() {
+    return handle ? packets : -1;
 }
 
 void stop_capture_IPC() {
