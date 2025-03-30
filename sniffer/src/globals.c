@@ -2,4 +2,4 @@
 
 pcap_t* handle = NULL;
 int linkhdrlen = 0;
-int packets = 0;
+u_int packets = 0;

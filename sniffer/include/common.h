@@ -9,6 +9,6 @@
 
 extern pcap_t* handle;
 extern int linkhdrlen;
-extern int packets;
+extern u_int packets;
 
 #endif // INCLUDE_COMMON_H

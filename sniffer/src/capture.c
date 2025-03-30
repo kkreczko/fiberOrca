@@ -98,7 +98,14 @@ void stop_capture() {
 }
 
 int stop_capture_TEST() {
-    return handle ? packets : -1;
+    struct pcap_stat stats;
+
+    if (handle && pcap_stats(handle, &stats) >= 0) {
+        pcap_close(handle);
+        return packets != packets - stats.ps_drop;
+    }
+
+    return 255;
 }
 
 void stop_capture_IPC() {
