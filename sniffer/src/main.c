@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
     int mode[3];
     mode[IPC] = 1;
 
-    while ((opt = getopt(argc, argv, "hi:n:")) != -1) {
+    while ((opt = getopt(argc, argv, "hi:n:vt")) != -1) {
         switch (opt) {
             case 'h':
                 printf("Usage: %s [-i interface] [-n count] [-v verbose] [-t test] [filter]\nexample: -n 64 tcp port 80", argv[0]);
