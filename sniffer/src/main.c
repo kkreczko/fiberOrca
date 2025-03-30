@@ -90,7 +90,7 @@ int main(int argc, char* argv[]) {
             pcap_close(handle);
             return EXIT_FAILURE;
         }
-        // returns number of caught packets as exit code, might change later to something cooler
+        // 0 if test good, 255 if test bad
         return stop_capture_TEST();
     }
 
