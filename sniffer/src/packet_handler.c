@@ -78,6 +78,10 @@ void packet_handler(u_char *user, const struct pcap_pkthdr *packethdr, const u_c
     packets++;
 }
 
+void packet_handler_TEST(u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr) {
+    packets++;
+}
+
 void packet_handler_IPC(u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr) {
     static int sock = -1;
 
