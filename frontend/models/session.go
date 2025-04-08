@@ -24,9 +24,9 @@ var style = lipgloss.NewStyle().
 // Session is a struct that represents a application session
 // It implements the Model interface
 type Session struct {
-	packetPreviews   list.Model
+	PacketPreviews   list.Model
 	collectedPackets []Packet
-	filter           *Filter
+	Filter           *Filter
 	startTime        time.Time
 	endTime          time.Time
 	file             string
@@ -47,11 +47,11 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if !s.loaded {
 			packetList := list.New([]list.Item{}, list.NewDefaultDelegate(), width, height)
 			packetList.Title = "Packets"
-			s.packetPreviews = packetList
+			s.PacketPreviews = packetList
 			style.Width(width)
 			style.Height(height)
 			s.loaded = true
-			s.filter = NewFilter(s, width, height)
+			s.Filter = NewFilter(s, width, height)
 		}
 	case tea.KeyMsg:
 		if !s.loaded {
@@ -63,10 +63,10 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			s.quit = true
 			return s, tea.Quit
 		case "enter":
-			if len(s.packetPreviews.Items()) == 0 {
+			if len(s.PacketPreviews.Items()) == 0 {
 				return s, nil
 			}
-			ID := s.packetPreviews.SelectedItem().(PacketPreview).ID
+			ID := s.PacketPreviews.SelectedItem().(PacketPreview).ID
 			for _, p := range s.collectedPackets {
 				if p.ID == ID {
 					modelList[packet] = NewPacketView(p, s, width, height)
@@ -80,13 +80,13 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			modelList[filter] = newFilter
 			return modelList[filter], modelList[filter].Init()
 		case "r": // Add a way to reset filter with 'r' key
-			s.filter.Reset()
+			s.Filter.Reset()
 			s.updateFilteredView()
 			return s, nil
 		}
 
 		var cmd tea.Cmd
-		s.packetPreviews, cmd = s.packetPreviews.Update(msg)
+		s.PacketPreviews, cmd = s.PacketPreviews.Update(msg)
 		return s, cmd
 
 	case *Packet:
@@ -98,7 +98,7 @@ func (s *Session) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 
 	var cmd tea.Cmd
-	s.packetPreviews, cmd = s.packetPreviews.Update(msg)
+	s.PacketPreviews, cmd = s.PacketPreviews.Update(msg)
 	return s, cmd
 }
 
@@ -107,7 +107,7 @@ func (s *Session) View() string {
 		return ""
 	}
 	if s.loaded {
-		return style.Render(s.packetPreviews.View())
+		return style.Render(s.PacketPreviews.View())
 	} else {
 		return "Loading..."
 	}
@@ -119,14 +119,14 @@ func NewSession() *Session {
 		startTime: time.Now(),
 		loaded:    false,
 		quit:      false,
-		filter:    nil,
+		Filter:    nil,
 	}
 }
 
 func (s *Session) updateFilteredView() {
 	var filteredItems []list.Item
 
-	if !s.filter.IsActive() {
+	if s.Filter == nil || !s.Filter.IsActive() {
 		// If filter is not active, show all packets
 		for _, packet := range s.collectedPackets {
 			filteredItems = append(filteredItems, NewPacketPreview(packet))
@@ -134,12 +134,14 @@ func (s *Session) updateFilteredView() {
 	} else {
 		// Apply filter to all packets
 		for _, packet := range s.collectedPackets {
-			if s.filter.Matches(packet) {
+			if s.Filter.Matches(packet) {
 				filteredItems = append(filteredItems, NewPacketPreview(packet))
 			}
 		}
 	}
 
 	// Set the filtered items
-	s.packetPreviews.SetItems(filteredItems)
+	s.PacketPreviews.SetItems(filteredItems)
 }
+
+func (s *Session) GetPackets() []Packet { return s.collectedPackets }
