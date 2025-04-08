@@ -122,7 +122,7 @@ func (m *Filter) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			!m.endTime.IsZero()
 
 		// Update session's filter and refresh view
-		m.session.filter = m
+		m.session.Filter = m
 		m.session.updateFilteredView()
 
 		// Return to session view
