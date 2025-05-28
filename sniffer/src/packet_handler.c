@@ -86,7 +86,7 @@ void packet_handler_IPC(u_char *user, const struct pcap_pkthdr *packethdr, const
     static int sock = -1;
 
     if (sock == -1) {
-        sock = create_socket();
+        sock = CreateSocket();
         if (sock == -1) {
             perror("create_socket()");
             return;
@@ -100,7 +100,7 @@ void packet_handler_IPC(u_char *user, const struct pcap_pkthdr *packethdr, const
     }
 
     char *packet_str = parse_packet(&packethdr->ts, packetptr);
-    if (send_data(sock, packet_str, strlen(packet_str)) == -1) {
+    if (SendData(sock, packet_str, strlen(packet_str)) == -1) {
         close(sock);
         sock = -1;
     }

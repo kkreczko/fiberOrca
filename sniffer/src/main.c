@@ -15,7 +15,8 @@ enum mode {
 int main(int argc, char* argv[]) {
     char device[256] = {0};
     char filter[256] = {0};
-    int count, opt;
+    int count = 0;
+    int opt;
     int mode[3];
     mode[IPC] = 1;
 
@@ -51,39 +52,37 @@ int main(int argc, char* argv[]) {
         }
     }
 
-
-
-    handle = create_pcap_handle(device, filter);
+    handle = CreatePcapHandle(device, filter);
     if (handle == NULL) {
         return EXIT_FAILURE;
     }
 
-    linkhdrlen = get_link_header_len(handle);
+    linkhdrlen = GetLinkHeaderLen(handle);
     if (linkhdrlen == 0) {
         pcap_close(handle);
         return EXIT_FAILURE;
     }
 
     if (mode[VERBOSE]) {
-        signal(SIGINT, stop_capture);
-        signal(SIGTERM, stop_capture);
-        signal(SIGQUIT, stop_capture);
+        signal(SIGINT, StopCapture);
+        signal(SIGTERM, StopCapture);
+        signal(SIGQUIT, StopCapture);
         if (pcap_loop(handle, count, packet_handler, NULL) < 0) {
             perror("pcap_loop()");
             pcap_close(handle);
             return EXIT_FAILURE;
         }
-        stop_capture();
+        StopCapture();
     } else if (mode[IPC]) {
-        signal(SIGINT, stop_capture_IPC);
-        signal(SIGTERM, stop_capture_IPC);
-        signal(SIGQUIT, stop_capture_IPC);
+        signal(SIGINT, StopCaptureIPC);
+        signal(SIGTERM, StopCaptureIPC);
+        signal(SIGQUIT, StopCaptureIPC);
         if (pcap_loop(handle, count, packet_handler_IPC, NULL) < 0) {
             perror("pcap_loop()");
             pcap_close(handle);
             return EXIT_FAILURE;
         }
-        stop_capture_IPC();
+        StopCaptureIPC();
     } else {
         if (pcap_loop(handle, count, packet_handler_TEST, NULL) < 0) {
             perror("pcap_loop()");
@@ -91,7 +90,7 @@ int main(int argc, char* argv[]) {
             return EXIT_FAILURE;
         }
         // 0 if test good, 255 if test bad
-        return stop_capture_TEST();
+        return StopCaptureTest();
     }
 
     return EXIT_SUCCESS;
