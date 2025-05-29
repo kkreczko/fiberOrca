@@ -69,7 +69,7 @@ int GetLinkHeaderLen(pcap_t *handle) {
         case DLT_PPP:
             return 24;
         default:
-            perror("Unknown link type\n");
+            fprintf(stderr, "Error: Unknown link type encountered.\n");
             return 0;
     }
 }
