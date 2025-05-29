@@ -16,7 +16,7 @@ int CreateSocket() {
     strcpy(addr.sun_path, SOCKET_PATH);
 
     if (connect(sock, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
-        perror("Socket connection\n");
+        perror("Socket connection");
         close(sock);
         return -1;
     }
