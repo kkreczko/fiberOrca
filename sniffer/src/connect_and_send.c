@@ -7,7 +7,7 @@
 int CreateSocket() {
     const int sock = socket(AF_UNIX, SOCK_STREAM, 0);
     if (sock < 0) {
-        perror("Socket creation\n");
+        perror("Socket creation");
         return -1;
     }
 
