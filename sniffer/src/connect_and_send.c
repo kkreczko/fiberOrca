@@ -1,15 +1,13 @@
 #include "connect_and_send.h"
+#include "common.h"
 
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 
-int create_socket() {
-    int sock = socket(AF_UNIX, SOCK_STREAM, 0);
+int CreateSocket() {
+    const int sock = socket(AF_UNIX, SOCK_STREAM, 0);
     if (sock < 0) {
-        perror("socket");
+        perror("Socket creation");
         return -1;
     }
 
@@ -18,7 +16,7 @@ int create_socket() {
     strcpy(addr.sun_path, SOCKET_PATH);
 
     if (connect(sock, (struct sockaddr *) &addr, sizeof(addr)) < 0) {
-        perror("connect");
+        perror("Socket connection");
         close(sock);
         return -1;
     }
@@ -26,10 +24,10 @@ int create_socket() {
     return sock;
 }
 
-int send_data(int sock, const char* data, size_t len) {
-    ssize_t sent = send(sock, data, len, 0);
+int SendData(const int sock, const char* data, const size_t len) {
+    const ssize_t sent = send(sock, data, len, 0);
     if (sent < 0) {
-        perror("send");
+        perror("Socket data send");
         return -1;
     }
 
