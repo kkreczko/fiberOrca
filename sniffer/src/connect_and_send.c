@@ -27,7 +27,7 @@ int CreateSocket() {
 int SendData(const int sock, const char* data, const size_t len) {
     const ssize_t sent = send(sock, data, len, 0);
     if (sent < 0) {
-        perror("Socket data send\n");
+        perror("Socket data send");
         return -1;
     }
 
