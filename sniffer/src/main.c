@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
         signal(SIGINT, StopCapture);
         signal(SIGTERM, StopCapture);
         signal(SIGQUIT, StopCapture);
-        if (pcap_loop(handle, count, packet_handler, NULL) < 0) {
+        if (pcap_loop(handle, count, PacketHandlerVerbose, NULL) < 0) {
             perror("pcap_loop()");
             pcap_close(handle);
             return EXIT_FAILURE;
@@ -77,19 +77,18 @@ int main(int argc, char* argv[]) {
         signal(SIGINT, StopCaptureIPC);
         signal(SIGTERM, StopCaptureIPC);
         signal(SIGQUIT, StopCaptureIPC);
-        if (pcap_loop(handle, count, packet_handler_IPC, NULL) < 0) {
+        if (pcap_loop(handle, count, PacketHandlerIPC, NULL) < 0) {
             perror("pcap_loop()");
             pcap_close(handle);
             return EXIT_FAILURE;
         }
         StopCaptureIPC();
     } else {
-        if (pcap_loop(handle, count, packet_handler_TEST, NULL) < 0) {
+        if (pcap_loop(handle, count, PacketHandlerTest, NULL) < 0) {
             perror("pcap_loop()");
             pcap_close(handle);
             return EXIT_FAILURE;
         }
-        // 0 if test good, 255 if test bad
         return StopCaptureTest();
     }
 

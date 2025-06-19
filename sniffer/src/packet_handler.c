@@ -8,9 +8,7 @@
 #include <string.h>
 #include <unistd.h>
 
-//WARN When switching to ICP this will have to be changed, or we should add new function that will work only with ICP
-//we might leave non-ICP functionality of this program for UX
-void packet_handler(u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr) {
+void PacketHandlerVerbose(u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr) {
     struct icmp *icmphdr;
     struct tcphdr *tcphdr;
     struct udphdr *udphdr;
@@ -78,11 +76,11 @@ void packet_handler(u_char *user, const struct pcap_pkthdr *packethdr, const u_c
     packets++;
 }
 
-void packet_handler_TEST(u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr) {
+void PacketHandlerTest(u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr) {
     packets++;
 }
 
-void packet_handler_IPC(u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr) {
+void PacketHandlerIPC(u_char *user, const struct pcap_pkthdr *packethdr, const u_char *packetptr) {
     static int sock = -1;
 
     if (sock == -1) {
@@ -99,7 +97,7 @@ void packet_handler_IPC(u_char *user, const struct pcap_pkthdr *packethdr, const
         return;
     }
 
-    char *packet_str = parse_packet(&packethdr->ts, packetptr);
+    char *packet_str = ParsePacket(&packethdr->ts, packetptr);
     if (SendData(sock, packet_str, strlen(packet_str)) == -1) {
         close(sock);
         sock = -1;
