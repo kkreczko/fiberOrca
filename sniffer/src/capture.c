@@ -9,11 +9,11 @@ pcap_t *CreatePcapHandle(char *device, char *filter) {
 
     if (!device[0]) {
         if (pcap_findalldevs(&devices, errBuff) == PCAP_ERROR) {
-            perror("pcap_findalldevs\n");
+            perror("pcap_findalldevs");
             return NULL;
         }
         if (devices == NULL) {
-            perror("pcap_findalldevs\n");
+            perror("pcap_findalldevs");
             return NULL;
         }
         strncpy(device, devices[0].name, 255);
@@ -22,26 +22,26 @@ pcap_t *CreatePcapHandle(char *device, char *filter) {
     }
 
     if (pcap_lookupnet(device, &srcIp, &netMask, errBuff) == PCAP_ERROR) {
-        perror("pcap_lookupnet\n");
+        perror("pcap_lookupnet");
         netMask = 0;
         srcIp = 0;
     }
 
     handle = pcap_open_live(device, BUFSIZ, 1, 1000, errBuff);
     if (handle == NULL) {
-        perror("pcap_open_live\n");
+        perror("pcap_open_live");
         return NULL;
     }
 
     if (filter[0] != '\0') {
         if (pcap_compile(handle, &bpf, filter, 0, netMask) == PCAP_ERROR) {
-            perror("pcap_compile\n");
+            perror("pcap_compile");
             pcap_close(handle);
             return NULL;
         }
 
         if (pcap_setfilter(handle, &bpf) == PCAP_ERROR) {
-            perror("pcap_setfilter\n");
+            perror("pcap_setfilter");
             pcap_close(handle);
             return NULL;
         }
@@ -56,7 +56,7 @@ int GetLinkHeaderLen(pcap_t *handle) {
     int linkType;
 
     if ((linkType = pcap_datalink(handle)) == PCAP_ERROR) {
-        perror("pcap_datalink\n");
+        perror("pcap_datalink");
         return 0;
     }
 
@@ -69,7 +69,7 @@ int GetLinkHeaderLen(pcap_t *handle) {
         case DLT_PPP:
             return 24;
         default:
-            fprintf(stderr, "Error: Unknown link type encountered.\n");
+            fprintf(stderr, "Error: Unknown link type encountered.");
             return 0;
     }
 }
