@@ -1,7 +1,7 @@
 #include "parse_packet.h"
 #include "common.h"
 
-char* parse_packet(const struct timeval *tv, const u_char *payload) {
+char* ParsePacket(const struct timeval *tv, const u_char *payload) {
     static char packet_str[MAX_PACKET_STRING];
     char srcip[16], dstip[16];
 

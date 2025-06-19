@@ -8,8 +8,6 @@ import (
 	"time"
 )
 
-// THIS FUNCTION PARSES INCOMING PACKETS INTO COOL AND NICE! PACKET TYPE STRUCTURES
-// IT JUST WORKS?
 func parsePacket(packetData []byte) (*models.Packet, error) {
 	data := string(packetData)
 
