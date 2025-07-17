@@ -1,5 +1,5 @@
 clean:
-	rm ./release/*
+	@rm ./output/*
 
 build-net:
 	@mkdir -p output
