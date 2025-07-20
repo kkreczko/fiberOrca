@@ -3,4 +3,4 @@ clean:
 
 build-net:
 	@mkdir -p output
-	@clang -I=./net/include/ ./net/main.cpp -o ./output/net-bin
+	@clang -I=./net/include/ ./net/main.cpp -o ./output/net-bin -g
