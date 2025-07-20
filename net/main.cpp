@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,8 +18,27 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 
-int main()
+#define EXIT_MSG(msg) do { perror(msg); exit(EXIT_FAILURE); } while(0)
+
+typedef struct {
+  uint8_t tProto;
+  char *srcIp;
+  char *dstIp;
+  uint16_t srcPort;
+  uint16_t dstPort;
+  char *srcIfName;
+  char *dstIfName;
+  uint8_t srcMac[6];
+  uint8_t dstMac[6];
+} filter_t;
+
+struct sockaddr_in sourceAddr, destAddr;
+
+int main(int argc, char **argv)
 {
-  int tcpSock = socket(AF_INET, SOCK_RAW, IPPROTO_RAW);
-  return 0;
+  int c;
+  char log[255];
+  FILE *logfile = NULL;
+
+  filter_t userFilter = {};
 }
