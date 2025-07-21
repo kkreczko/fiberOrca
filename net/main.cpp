@@ -41,4 +41,7 @@ int main(int argc, char **argv)
   FILE *logfile = NULL;
 
   filter_t userFilter = {};
+  struct sockaddr socketAddr;
+
+  int sockFd, socketAddrLen, buffLen;
 }
