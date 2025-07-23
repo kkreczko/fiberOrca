@@ -1,3 +1,4 @@
+#include <asm-generic/socket.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,61 +18,62 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 
-#define EXIT_MSG(msg) do { perror(msg); exit(EXIT_FAILURE); } while(0)
+#include "include/dbg_helpers.h"
 
-typedef struct {
-  uint8_t tProto;
-  char *srcIp;
-  char *dstIp;
-  uint16_t srcPort;
-  uint16_t dstPort;
-  char *srcIfName;
-  char *dstIfName;
-  uint8_t srcMac[6];
-  uint8_t dstMac[6];
-} filter_t;
+#define BUFFSIZ 2048
 
-struct sockaddr_in sourceAddr, destAddr;
+// BELOW HAS TO GO VERY STUPID
+#define IF_NAME "wlp4s0"
+
+char *transport_protocol(unsigned int code)
+{
+  switch(code)
+  {
+    case 1: return "icmp";
+    case 2: return "igmp";
+    case 6: return "tcp";
+    case 17: return "udp";
+    default: return "unknown";
+  }
+}
 
 int main(int argc, char **argv)
 {
-  int c;
-  char log[255];
-  FILE *logFile = NULL;
+  int sock, n;
+  char buffer[BUFFSIZ];
+  unsigned char *iphead, *ethhead;
 
-  filter_t userFilter = {};
-  struct sockaddr socketAddr;
+  if ((sock = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_IP))) == -1)
+    EXIT_MSG("NET: failed to create socket")
 
-  int sockFd, socketAddrLen, buffLen;
-  uint8_t *buffer = (uint8_t *)malloc(65536);
-  memset(buffer, 0, 65536);
+  const char *opt;
 
-  sockFd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
-
-  if (sockFd == -1)
-    EXIT_MSG("NET: Failed to create raw socket");
-
-  while (1) {
-    static struct option long_options[] = {
-      {"Source IP address", required_argument, NULL, 's'},
-      {"Destination IP address", required_argument, NULL, 'd'},
-      {"Source port", required_argument, NULL, 'p'},
-      {"Destination port", required_argument, NULL, 't'},
-      {"Source network interface", required_argument, NULL, 'i'},
-      {"Destination network interface", required_argument, NULL, 'g'},
-      {"Log file location", required_argument, NULL, 'o'},
-      {"Catch TCP packets", no_argument, NULL, 'm'},
-      {"Catch UDP packets", no_argument, NULL, 'n'},
-      {0, 0, 0, 0}
-    };
-
-    int opt = getopt_long(argc, argv, "mns::d:p:t:i:g:o", long_options, NULL);
-
-    if (opt == -1)
-      break;
-
-    switch (c) {
-
-    }
+  // TODO IMPORTANT
+  // it has to be found automatically rather than hardcoded
+  opt = IF_NAME;
+  
+  if (setsockopt(sock, SOL_SOCKET, SO_BINDTODEVICE, opt, strlen(opt) + 1) == -1) 
+  {
+    close(sock);
+    EXIT_MSG("NET: failed to bind to device")
   }
+
+  struct ifreq ethreq;
+
+  strncpy(ethreq.ifr_name, IF_NAME, IF_NAMESIZE);
+  if (ioctl(sock, SIOCGIFFLAGS, &ethreq) == -1) 
+  {
+    close(sock);
+    EXIT_MSG("NET: failed to set device name");
+  }
+
+  ethreq.ifr_flags |= IFF_PROMISC;
+  if (ioctl(sock, SIOCGIFFLAGS, &ethreq) == -1) 
+  {
+    close(sock);
+    EXIT_MSG("NET: failed to set device into promiscous mode");
+  }
+
+  close(sock);
+  return 0;
 }
