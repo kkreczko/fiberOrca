@@ -97,6 +97,11 @@ int main(int argc, char **argv)
   Filter.len = sizeof(BPF_code)/sizeof(BPF_code[0]); 
   Filter.filter = BPF_code;
 
+  if (setsockopt(sock, SOL_SOCKET, SO_ATTACH_FILTER, &Filter, sizeof(Filter)) < 0) {
+        close(sock);
+        EXIT_MSG("BPF: failed to set socket filter");
+  } 
+
   while(1) {
     printf("-----------\n");
     n = recvfrom(sock, buffer, 2048, 0, NULL, NULL);
