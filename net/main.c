@@ -77,6 +77,7 @@ int main(int argc, char **argv)
     EXIT_MSG("NET: failed to set device into promiscous mode");
   }
 
+  // TODO: We need to get it automatically from??? tcpdump??? :rofl:
   struct sock_filter BPF_code[] = {
     { 0x28, 0, 0, 0x0000000c },
     { 0x15, 0, 2, 0x00000800 },
