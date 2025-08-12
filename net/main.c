@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 
   const char *opt;
 
-  // !IMPORTANT
+  // !IMPORTANT pcap_findalldevs
   // it has to be found automatically rather than hardcoded
   // first thing to change as it limits functionality substantially
   opt = IF_NAME;
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 
   // We don't need that as the program will work only with frontend approach in mind
   // Verbose mode I think should go as it's useless
-  while(1) {
+  while(1) { // pcap_loop
     printf("-----------\n");
     n = recvfrom(sock, buffer, 2048, 0, NULL, NULL);
     printf("%d bytes read\n", n);
