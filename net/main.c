@@ -77,7 +77,11 @@ int main(int argc, char **argv)
     EXIT_MSG("NET: failed to set device into promiscous mode");
   }
 
-  // TODO: We need to get it automatically from??? tcpdump??? :rofl:
+  // TODO:
+  // We can skip filtering here as we have filters on the frontend but allegedly filtering using BPF has much less overhead
+  // We could orchestrate filtering through killing sniffer process and starting a new one with different filter everytime we 
+  // Choose filtering options on the frontend, needs testing and verification as this orchestrating might be slower than just
+  // Filtering on the frontend, we'll see
   struct sock_filter BPF_code[] = {
     { 0x28, 0, 0, 0x0000000c },
     { 0x15, 0, 2, 0x00000800 },
