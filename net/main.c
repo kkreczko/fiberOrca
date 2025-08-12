@@ -51,8 +51,9 @@ int main(int argc, char **argv)
 
   const char *opt;
 
-  // TODO IMPORTANT
+  // !IMPORTANT
   // it has to be found automatically rather than hardcoded
+  // first thing to change as it limits functionality substantially
   opt = IF_NAME;
   
   if (setsockopt(sock, SOL_SOCKET, SO_BINDTODEVICE, opt, strlen(opt) + 1) == -1) 
@@ -78,7 +79,7 @@ int main(int argc, char **argv)
   }
 
   // TODO:
-  // We can skip filtering here as we have filters on the frontend but allegedly filtering using BPF has much less overhead
+  // We can skip filtering here as we have filters on the frontend but apparently filtering using BPF with sys calls has much less overhead
   // We could orchestrate filtering through killing sniffer process and starting a new one with different filter everytime we 
   // Choose filtering options on the frontend, needs testing and verification as this orchestrating might be slower than just
   // Filtering on the frontend, we'll see
@@ -106,6 +107,8 @@ int main(int argc, char **argv)
         EXIT_MSG("BPF: failed to set socket filter");
   } 
 
+  // We don't need that as the program will work only with frontend approach in mind
+  // Verbose mode I think should go as it's useless
   while(1) {
     printf("-----------\n");
     n = recvfrom(sock, buffer, 2048, 0, NULL, NULL);
