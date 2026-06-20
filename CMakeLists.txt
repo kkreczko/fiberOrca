@@ -13,16 +13,16 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_library(net net-cpp/device.cpp net-cpp/listen.cpp)
+add_library(net net-cpp/device.cpp net-cpp/listen.cpp net-cpp/printer.cpp net-cpp/packet.cpp)
 target_include_directories(net PUBLIC net-cpp)
 
-add_library(helper net-cpp/helper.cpp net-cpp/printer.cpp)
+add_library(helper net-cpp/helper.cpp)
 target_include_directories(helper PUBLIC net-cpp)
 
 add_executable(fiberorca net-cpp/main.cpp)
 target_link_libraries(main PRIVATE helper net)
 
-add_executable(net_tests tests/test_device.cpp tests/test_listen.cpp)
+add_executable(net_tests tests/test_device.cpp tests/test_listen.cpp tests/test_packet.cpp tests/test_printer.cpp)
 target_link_libraries(net_tests PRIVATE net helper GTest::gtest_main)
 
 include(GoogleTest)
