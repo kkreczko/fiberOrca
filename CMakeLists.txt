@@ -20,7 +20,7 @@ add_library(helper net-cpp/helper.cpp)
 target_include_directories(helper PUBLIC net-cpp)
 
 add_executable(fiberorca net-cpp/main.cpp)
-target_link_libraries(main PRIVATE helper net)
+target_link_libraries(fiberorca PRIVATE helper net)
 
 add_executable(net_tests tests/test_device.cpp tests/test_listen.cpp tests/test_packet.cpp tests/test_printer.cpp)
 target_link_libraries(net_tests PRIVATE net helper GTest::gtest_main)
