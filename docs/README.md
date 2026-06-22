@@ -1,20 +1,20 @@
 # fiberOrca
 
-Real-time network packet analyzer accessible only through terminal.
+Real-time network packet analyzer.
 
 ## Features
 
 - Real-time packet capture using libpcap
 - Support for TCP, UDP, and ICMP protocols
 - Detailed packet analysis including timestamps, ports, and IP addresses
-- Low-latency IPC communication between components
 - Live packet data visualization
 
 ## Requirements
 
-- Linux-based system
-- libpcap
-- root privileges
+- Linux
+- root
+- cmake
+- clang
 
 ## Installation
 
@@ -24,23 +24,21 @@ git clone https://github.com/kruczys/fiberOrca.git
 cd fiberOrca
 ```
 
-2. Install libpcap dependencies (you need to have make, gcc, bison and flex installed for libpcap to install):
+2. Configure, build and install:
 ```bash
-chmod +x scripts/install_libpcap.sh
-sudo ./scripts/install_libpcap.sh
+mkdir build && cd build
+cmake ../ -DCMAKE_BUILD_TYPE=Relese
+cmake --build .
+sudo cmake --install .
 ```
 
-## Running from fiberOrca's directory
-
-The project includes a run script that handles starting both components:
+## Running
 
 ```bash
-chmod +x scripts/run.sh
-sudo ./scripts/run.sh
+fiberorca
 ```
 
-Out of the box functionality of running this program from anywhere within system will be added later.
-
+Use ```--help``` for available start commands.
 
 ## Navigating the program
 
